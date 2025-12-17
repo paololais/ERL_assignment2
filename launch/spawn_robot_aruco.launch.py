@@ -11,7 +11,7 @@ def generate_launch_description():
 
     pkg_assignment2 = get_package_share_directory('assignment2')
     pkg_ros_gz_sim = get_package_share_directory('ros_gz_sim')
-
+    pkg_nav2_bringup = get_package_share_directory('nav2_bringup')
 
     gazebo_models_path, _ = os.path.split(pkg_assignment2)
     os.environ["GZ_SIM_RESOURCE_PATH"] += os.pathsep + gazebo_models_path
@@ -120,6 +120,7 @@ def generate_launch_description():
             "/joint_states@sensor_msgs/msg/JointState@gz.msgs.Model",
             "/tf@tf2_msgs/msg/TFMessage@gz.msgs.Pose_V",
             "/camera/camera_info@sensor_msgs/msg/CameraInfo@gz.msgs.CameraInfo",
+            "/scan@sensor_msgs/msg/LaserScan@gz.msgs.LaserScan",
         ],
         output="screen",
         parameters=[
