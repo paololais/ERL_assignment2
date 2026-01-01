@@ -1,0 +1,12 @@
+# Goal
+int32 target_marker_id  # ID del marker da cercare
+float32 timeout_seconds  # Timeout per la ricerca
+---
+# Result
+bool marker_found
+int32 marker_id
+geometry_msgs/Pose marker_pose
+---
+# Feedback
+float32 elapsed_time
+int32 markers_detected_count
