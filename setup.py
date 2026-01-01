@@ -34,6 +34,9 @@ setup(
     },
     entry_points={
         'console_scripts': [
+            'detect_aruco_node = assignment2.detect_aruco_node:main',
+            'move_Action = assignment2.move_action:main',
+            'planning_node = assignment2.planning:main',
         ],
     },
 )

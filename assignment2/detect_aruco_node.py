@@ -122,7 +122,7 @@ class DetectArucoNode(Node):
             self.detect_markers()
         
         # Early exit if all markers found
-        if len(self.detected_ids) == 5:
+        if len(self.detected_ids) == 4:
             self.get_logger().info(f"All 5 markers found! Stopping rotation early.")
             self.stop_rotation()
             return
