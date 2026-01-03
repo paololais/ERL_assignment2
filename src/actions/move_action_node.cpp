@@ -114,10 +114,10 @@ private:
   bool get_waypoint_coordinates(
     const std::string & wp, double & x, double & y)
   {
-    if (wp == "wp1") { x = -6.0; y = -6.0; }
-    else if (wp == "wp2") { x = -6.0; y =  6.0; }
-    else if (wp == "wp3") { x =  6.0; y = -6.0; }
-    else if (wp == "wp4") { x =  6.0; y =  6.0; }
+    if (wp == "wp_1") { x = -6.0; y = -6.0; }
+    else if (wp == "wp_2") { x = -6.0; y =  6.0; }
+    else if (wp == "wp_3") { x =  6.0; y = -6.0; }
+    else if (wp == "wp_4") { x =  6.0; y =  6.0; }
     else { return false; }
 
     return true;
