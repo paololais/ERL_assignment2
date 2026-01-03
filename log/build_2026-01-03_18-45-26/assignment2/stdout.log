@@ -1,0 +1,52 @@
+-- The C compiler identification is GNU 13.3.0
+-- The CXX compiler identification is GNU 13.3.0
+-- Detecting C compiler ABI info
+-- Detecting C compiler ABI info - done
+-- Check for working C compiler: /usr/bin/cc - skipped
+-- Detecting C compile features
+-- Detecting C compile features - done
+-- Detecting CXX compiler ABI info
+-- Detecting CXX compiler ABI info - done
+-- Check for working CXX compiler: /usr/bin/c++ - skipped
+-- Detecting CXX compile features
+-- Detecting CXX compile features - done
+-- Found ament_cmake: 2.5.4 (/opt/ros/jazzy/share/ament_cmake/cmake)
+-- Found Python3: /usr/bin/python3 (found version "3.12.3") found components: Interpreter 
+-- Found rclcpp: 28.1.13 (/opt/ros/jazzy/share/rclcpp/cmake)
+-- Found rosidl_generator_c: 4.6.6 (/opt/ros/jazzy/share/rosidl_generator_c/cmake)
+-- Found rosidl_generator_cpp: 4.6.6 (/opt/ros/jazzy/share/rosidl_generator_cpp/cmake)
+-- Using all available rosidl_typesupport_c: rosidl_typesupport_fastrtps_c;rosidl_typesupport_introspection_c
+-- Using all available rosidl_typesupport_cpp: rosidl_typesupport_fastrtps_cpp;rosidl_typesupport_introspection_cpp
+-- Found rmw_implementation_cmake: 7.3.2 (/opt/ros/jazzy/share/rmw_implementation_cmake/cmake)
+-- Found rmw_fastrtps_cpp: 8.4.3 (/opt/ros/jazzy/share/rmw_fastrtps_cpp/cmake)
+-- Found OpenSSL: /usr/lib/x86_64-linux-gnu/libcrypto.so (found version "3.0.13")  
+-- Found FastRTPS: /opt/ros/jazzy/include (Required is at least version "2.13") 
+-- Using RMW implementation 'rmw_fastrtps_cpp' as default
+-- Found plansys2_pddl_parser: 2.0.18 (/opt/ros/jazzy/share/plansys2_pddl_parser/cmake)
+-- Found plansys2_domain_expert: 2.0.18 (/opt/ros/jazzy/share/plansys2_domain_expert/cmake)
+-- Found plansys2_planner: 2.0.18 (/opt/ros/jazzy/share/plansys2_planner/cmake)
+-- Found plansys2_executor: 2.0.18 (/opt/ros/jazzy/share/plansys2_executor/cmake)
+-- Found geometry_msgs: 5.3.6 (/opt/ros/jazzy/share/geometry_msgs/cmake)
+-- Found nav2_msgs: 1.3.10 (/opt/ros/jazzy/share/nav2_msgs/cmake)
+-- Found ament_lint_auto: 0.17.3 (/opt/ros/jazzy/share/ament_lint_auto/cmake)
+-- Configuring done (2.2s)
+-- Generating done (0.1s)
+-- Build files have been written to: /home/utente/Documenti/Magistrale/SecondoAnno/EXP_RO/EXP_Ws/src/ERL_assignment2/build/assignment2
+[ 28%] [32mBuilding CXX object CMakeFiles/move_action_node.dir/src/actions/move_action_node.cpp.o[0m
+[ 28%] [32mBuilding CXX object CMakeFiles/detect_marker_action_node.dir/src/actions/detect_marker_action_node.cpp.o[0m
+[ 28%] [32mBuilding CXX object CMakeFiles/get_plan.dir/src/getplan.cpp.o[0m
+[ 28%] [32mBuilding CXX object CMakeFiles/get_plan_and_execute.dir/src/getplan_and_execute.cpp.o[0m
+[ 50%] [32mBuilding CXX object CMakeFiles/finalize_detection_phase_action_node.dir/src/actions/finalize_detection_phase_action_node.cpp.o[0m
+[ 50%] [32mBuilding CXX object CMakeFiles/take_picture_action_node.dir/src/actions/take_picture_action_node.cpp.o[0m
+[ 50%] [32mBuilding CXX object CMakeFiles/process_last_image_action_node.dir/src/actions/process_last_image_action_node.cpp.o[0m
+[ 50%] Built target ament_cmake_python_copy_assignment2_setup
+[ 50%] Built target ament_cmake_python_copy_assignment2
+running egg_info
+creating assignment2.egg-info
+writing assignment2.egg-info/PKG-INFO
+writing dependency_links to assignment2.egg-info/dependency_links.txt
+writing top-level names to assignment2.egg-info/top_level.txt
+writing manifest file 'assignment2.egg-info/SOURCES.txt'
+reading manifest file 'assignment2.egg-info/SOURCES.txt'
+writing manifest file 'assignment2.egg-info/SOURCES.txt'
+[ 50%] Built target ament_cmake_python_build_assignment2_egg

@@ -1,0 +1,9 @@
+setup.cfg
+setup.py
+assignment2/__init__.py
+assignment2/detect_aruco_node.py
+assignment2/planning.py
+assignment2.egg-info/PKG-INFO
+assignment2.egg-info/SOURCES.txt
+assignment2.egg-info/dependency_links.txt
+assignment2.egg-info/top_level.txt

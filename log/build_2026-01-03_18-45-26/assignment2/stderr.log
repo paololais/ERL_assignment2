@@ -1,0 +1,15 @@
+gmake[2]: *** [CMakeFiles/get_plan_and_execute.dir/build.make:76: CMakeFiles/get_plan_and_execute.dir/src/getplan_and_execute.cpp.o] Interrupt
+gmake[2]: *** [CMakeFiles/detect_marker_action_node.dir/build.make:76: CMakeFiles/detect_marker_action_node.dir/src/actions/detect_marker_action_node.cpp.o] Interrupt
+gmake[2]: *** [CMakeFiles/finalize_detection_phase_action_node.dir/build.make:76: CMakeFiles/finalize_detection_phase_action_node.dir/src/actions/finalize_detection_phase_action_node.cpp.o] Interrupt
+gmake[1]: *** [CMakeFiles/Makefile2:257: CMakeFiles/detect_marker_action_node.dir/all] Interrupt
+gmake[2]: *** [CMakeFiles/move_action_node.dir/build.make:76: CMakeFiles/move_action_node.dir/src/actions/move_action_node.cpp.o] Interrupt
+gmake[2]: *** [CMakeFiles/take_picture_action_node.dir/build.make:76: CMakeFiles/take_picture_action_node.dir/src/actions/take_picture_action_node.cpp.o] Interrupt
+gmake[2]: *** [CMakeFiles/get_plan.dir/build.make:76: CMakeFiles/get_plan.dir/src/getplan.cpp.o] Interrupt
+gmake[1]: *** [CMakeFiles/Makefile2:153: CMakeFiles/get_plan.dir/all] Interrupt
+gmake[1]: *** [CMakeFiles/Makefile2:205: CMakeFiles/move_action_node.dir/all] Interrupt
+gmake[1]: *** [CMakeFiles/Makefile2:179: CMakeFiles/get_plan_and_execute.dir/all] Interrupt
+gmake[1]: *** [CMakeFiles/Makefile2:231: CMakeFiles/take_picture_action_node.dir/all] Interrupt
+gmake[1]: *** [CMakeFiles/Makefile2:283: CMakeFiles/finalize_detection_phase_action_node.dir/all] Interrupt
+gmake[2]: *** [CMakeFiles/process_last_image_action_node.dir/build.make:76: CMakeFiles/process_last_image_action_node.dir/src/actions/process_last_image_action_node.cpp.o] Interrupt
+gmake[1]: *** [CMakeFiles/Makefile2:309: CMakeFiles/process_last_image_action_node.dir/all] Interrupt
+gmake: *** [Makefile:146: all] Interrupt

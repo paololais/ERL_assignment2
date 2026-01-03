@@ -1,0 +1,71 @@
+[0.011s] Invoking command in '/home/utente/Documenti/Magistrale/SecondoAnno/EXP_RO/EXP_Ws/src/ERL_assignment2/build/assignment2': CMAKE_PREFIX_PATH=${CMAKE_PREFIX_PATH}:/home/utente/Documenti/Magistrale/SecondoAnno/EXP_RO/EXP_Ws/install/brain:/home/utente/Documenti/Magistrale/SecondoAnno/EXP_RO/EXP_Ws/install/assignment2:/opt/ros/jazzy DEBUGINFOD_URLS=https://debuginfod.ubuntu.com /usr/bin/cmake /home/utente/Documenti/Magistrale/SecondoAnno/EXP_RO/EXP_Ws/src/ERL_assignment2 -DCMAKE_INSTALL_PREFIX=/home/utente/Documenti/Magistrale/SecondoAnno/EXP_RO/EXP_Ws/src/ERL_assignment2/install/assignment2
+[0.204s] -- The C compiler identification is GNU 13.3.0
+[0.333s] -- The CXX compiler identification is GNU 13.3.0
+[0.351s] -- Detecting C compiler ABI info
+[0.439s] -- Detecting C compiler ABI info - done
+[0.447s] -- Check for working C compiler: /usr/bin/cc - skipped
+[0.447s] -- Detecting C compile features
+[0.447s] -- Detecting C compile features - done
+[0.456s] -- Detecting CXX compiler ABI info
+[0.541s] -- Detecting CXX compiler ABI info - done
+[0.549s] -- Check for working CXX compiler: /usr/bin/c++ - skipped
+[0.549s] -- Detecting CXX compile features
+[0.550s] -- Detecting CXX compile features - done
+[0.579s] -- Found ament_cmake: 2.5.4 (/opt/ros/jazzy/share/ament_cmake/cmake)
+[0.714s] -- Found Python3: /usr/bin/python3 (found version "3.12.3") found components: Interpreter 
+[0.838s] -- Found rclcpp: 28.1.13 (/opt/ros/jazzy/share/rclcpp/cmake)
+[0.903s] -- Found rosidl_generator_c: 4.6.6 (/opt/ros/jazzy/share/rosidl_generator_c/cmake)
+[0.921s] -- Found rosidl_generator_cpp: 4.6.6 (/opt/ros/jazzy/share/rosidl_generator_cpp/cmake)
+[0.945s] -- Using all available rosidl_typesupport_c: rosidl_typesupport_fastrtps_c;rosidl_typesupport_introspection_c
+[0.968s] -- Using all available rosidl_typesupport_cpp: rosidl_typesupport_fastrtps_cpp;rosidl_typesupport_introspection_cpp
+[1.060s] -- Found rmw_implementation_cmake: 7.3.2 (/opt/ros/jazzy/share/rmw_implementation_cmake/cmake)
+[1.065s] -- Found rmw_fastrtps_cpp: 8.4.3 (/opt/ros/jazzy/share/rmw_fastrtps_cpp/cmake)
+[1.175s] -- Found OpenSSL: /usr/lib/x86_64-linux-gnu/libcrypto.so (found version "3.0.13")  
+[1.198s] -- Found FastRTPS: /opt/ros/jazzy/include (Required is at least version "2.13") 
+[1.220s] -- Using RMW implementation 'rmw_fastrtps_cpp' as default
+[1.309s] -- Found plansys2_pddl_parser: 2.0.18 (/opt/ros/jazzy/share/plansys2_pddl_parser/cmake)
+[1.417s] -- Found plansys2_domain_expert: 2.0.18 (/opt/ros/jazzy/share/plansys2_domain_expert/cmake)
+[1.521s] -- Found plansys2_planner: 2.0.18 (/opt/ros/jazzy/share/plansys2_planner/cmake)
+[1.563s] -- Found plansys2_executor: 2.0.18 (/opt/ros/jazzy/share/plansys2_executor/cmake)
+[1.660s] -- Found geometry_msgs: 5.3.6 (/opt/ros/jazzy/share/geometry_msgs/cmake)
+[1.678s] -- Found nav2_msgs: 1.3.10 (/opt/ros/jazzy/share/nav2_msgs/cmake)
+[2.115s] -- Found ament_lint_auto: 0.17.3 (/opt/ros/jazzy/share/ament_lint_auto/cmake)
+[2.243s] -- Configuring done (2.2s)
+[2.402s] -- Generating done (0.1s)
+[2.415s] -- Build files have been written to: /home/utente/Documenti/Magistrale/SecondoAnno/EXP_RO/EXP_Ws/src/ERL_assignment2/build/assignment2
+[2.426s] Invoked command in '/home/utente/Documenti/Magistrale/SecondoAnno/EXP_RO/EXP_Ws/src/ERL_assignment2/build/assignment2' returned '0': CMAKE_PREFIX_PATH=${CMAKE_PREFIX_PATH}:/home/utente/Documenti/Magistrale/SecondoAnno/EXP_RO/EXP_Ws/install/brain:/home/utente/Documenti/Magistrale/SecondoAnno/EXP_RO/EXP_Ws/install/assignment2:/opt/ros/jazzy DEBUGINFOD_URLS=https://debuginfod.ubuntu.com /usr/bin/cmake /home/utente/Documenti/Magistrale/SecondoAnno/EXP_RO/EXP_Ws/src/ERL_assignment2 -DCMAKE_INSTALL_PREFIX=/home/utente/Documenti/Magistrale/SecondoAnno/EXP_RO/EXP_Ws/src/ERL_assignment2/install/assignment2
+[2.427s] Invoking command in '/home/utente/Documenti/Magistrale/SecondoAnno/EXP_RO/EXP_Ws/src/ERL_assignment2/build/assignment2': CMAKE_PREFIX_PATH=${CMAKE_PREFIX_PATH}:/home/utente/Documenti/Magistrale/SecondoAnno/EXP_RO/EXP_Ws/install/brain:/home/utente/Documenti/Magistrale/SecondoAnno/EXP_RO/EXP_Ws/install/assignment2:/opt/ros/jazzy DEBUGINFOD_URLS=https://debuginfod.ubuntu.com /usr/bin/cmake --build /home/utente/Documenti/Magistrale/SecondoAnno/EXP_RO/EXP_Ws/src/ERL_assignment2/build/assignment2 -- -j8 -l8
+[2.478s] [ 28%] [32mBuilding CXX object CMakeFiles/move_action_node.dir/src/actions/move_action_node.cpp.o[0m
+[2.478s] [ 28%] [32mBuilding CXX object CMakeFiles/detect_marker_action_node.dir/src/actions/detect_marker_action_node.cpp.o[0m
+[2.478s] [ 28%] [32mBuilding CXX object CMakeFiles/get_plan.dir/src/getplan.cpp.o[0m
+[2.478s] [ 28%] [32mBuilding CXX object CMakeFiles/get_plan_and_execute.dir/src/getplan_and_execute.cpp.o[0m
+[2.479s] [ 50%] [32mBuilding CXX object CMakeFiles/finalize_detection_phase_action_node.dir/src/actions/finalize_detection_phase_action_node.cpp.o[0m
+[2.479s] [ 50%] [32mBuilding CXX object CMakeFiles/take_picture_action_node.dir/src/actions/take_picture_action_node.cpp.o[0m
+[2.479s] [ 50%] [32mBuilding CXX object CMakeFiles/process_last_image_action_node.dir/src/actions/process_last_image_action_node.cpp.o[0m
+[2.489s] [ 50%] Built target ament_cmake_python_copy_assignment2_setup
+[2.519s] [ 50%] Built target ament_cmake_python_copy_assignment2
+[2.792s] running egg_info
+[2.792s] creating assignment2.egg-info
+[2.816s] writing assignment2.egg-info/PKG-INFO
+[2.817s] writing dependency_links to assignment2.egg-info/dependency_links.txt
+[2.817s] writing top-level names to assignment2.egg-info/top_level.txt
+[2.817s] writing manifest file 'assignment2.egg-info/SOURCES.txt'
+[2.911s] reading manifest file 'assignment2.egg-info/SOURCES.txt'
+[2.912s] writing manifest file 'assignment2.egg-info/SOURCES.txt'
+[2.936s] [ 50%] Built target ament_cmake_python_build_assignment2_egg
+[6.672s] gmake[2]: *** [CMakeFiles/get_plan_and_execute.dir/build.make:76: CMakeFiles/get_plan_and_execute.dir/src/getplan_and_execute.cpp.o] Interrupt
+[6.672s] gmake[2]: *** [CMakeFiles/detect_marker_action_node.dir/build.make:76: CMakeFiles/detect_marker_action_node.dir/src/actions/detect_marker_action_node.cpp.o] Interrupt
+[6.672s] gmake[2]: *** [CMakeFiles/finalize_detection_phase_action_node.dir/build.make:76: CMakeFiles/finalize_detection_phase_action_node.dir/src/actions/finalize_detection_phase_action_node.cpp.o] Interrupt
+[6.672s] gmake[1]: *** [CMakeFiles/Makefile2:257: CMakeFiles/detect_marker_action_node.dir/all] Interrupt
+[6.672s] gmake[2]: *** [CMakeFiles/move_action_node.dir/build.make:76: CMakeFiles/move_action_node.dir/src/actions/move_action_node.cpp.o] Interrupt
+[6.672s] gmake[2]: *** [CMakeFiles/take_picture_action_node.dir/build.make:76: CMakeFiles/take_picture_action_node.dir/src/actions/take_picture_action_node.cpp.o] Interrupt
+[6.672s] gmake[2]: *** [CMakeFiles/get_plan.dir/build.make:76: CMakeFiles/get_plan.dir/src/getplan.cpp.o] Interrupt
+[6.672s] gmake[1]: *** [CMakeFiles/Makefile2:153: CMakeFiles/get_plan.dir/all] Interrupt
+[6.672s] gmake[1]: *** [CMakeFiles/Makefile2:205: CMakeFiles/move_action_node.dir/all] Interrupt
+[6.672s] gmake[1]: *** [CMakeFiles/Makefile2:179: CMakeFiles/get_plan_and_execute.dir/all] Interrupt
+[6.673s] gmake[1]: *** [CMakeFiles/Makefile2:231: CMakeFiles/take_picture_action_node.dir/all] Interrupt
+[6.673s] gmake[1]: *** [CMakeFiles/Makefile2:283: CMakeFiles/finalize_detection_phase_action_node.dir/all] Interrupt
+[6.676s] gmake[2]: *** [CMakeFiles/process_last_image_action_node.dir/build.make:76: CMakeFiles/process_last_image_action_node.dir/src/actions/process_last_image_action_node.cpp.o] Interrupt
+[6.676s] gmake[1]: *** [CMakeFiles/Makefile2:309: CMakeFiles/process_last_image_action_node.dir/all] Interrupt
+[6.676s] gmake: *** [Makefile:146: all] Interrupt
+[6.724s] Invoked command in '/home/utente/Documenti/Magistrale/SecondoAnno/EXP_RO/EXP_Ws/src/ERL_assignment2/build/assignment2' returned '-2': CMAKE_PREFIX_PATH=${CMAKE_PREFIX_PATH}:/home/utente/Documenti/Magistrale/SecondoAnno/EXP_RO/EXP_Ws/install/brain:/home/utente/Documenti/Magistrale/SecondoAnno/EXP_RO/EXP_Ws/install/assignment2:/opt/ros/jazzy DEBUGINFOD_URLS=https://debuginfod.ubuntu.com /usr/bin/cmake --build /home/utente/Documenti/Magistrale/SecondoAnno/EXP_RO/EXP_Ws/src/ERL_assignment2/build/assignment2 -- -j8 -l8
