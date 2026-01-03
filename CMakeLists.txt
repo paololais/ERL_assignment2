@@ -55,6 +55,12 @@ ament_target_dependencies(move_action_node
 install(DIRECTORY
   pddl
   launch
+  urdf
+  worlds
+  rviz
+  meshes
+  maps
+  config
   DESTINATION share/${PROJECT_NAME}
 )
 
