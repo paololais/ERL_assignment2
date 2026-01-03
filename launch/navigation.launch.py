@@ -9,7 +9,7 @@ from ament_index_python.packages import get_package_share_directory
 
 def generate_launch_description():
 
-    pkg_ros2_navigation = get_package_share_directory('ros2_navigation')
+    pkg_ros2_navigation = get_package_share_directory('assignment2')
 
     sim_time_arg = DeclareLaunchArgument(
         'use_sim_time', default_value='True',
@@ -25,7 +25,7 @@ def generate_launch_description():
 
 
     navigation_params_path = os.path.join(
-        get_package_share_directory('ros2_navigation'),
+        get_package_share_directory('assignment2'),
         'config',
         'navigation.yaml'
     )
