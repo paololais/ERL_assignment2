@@ -12,7 +12,7 @@ from launch_ros.actions import Node
 def generate_launch_description():
     bringup_dir = get_package_share_directory('plansys2_bringup')
     print ("bringup_dir:", bringup_dir)
-    interface_dir = get_package_share_directory('plansys_interface')
+    interface_dir = get_package_share_directory('assignment2')
     model_file = LaunchConfiguration('model_file')
     problem_file = LaunchConfiguration('problem_file')
     namespace = LaunchConfiguration('namespace')
@@ -24,13 +24,13 @@ def generate_launch_description():
     
     declare_model_file_cmd = DeclareLaunchArgument(
         'model_file',
-        default_value=os.path.join(interface_dir, "domain", "domain.pddl"),
+        default_value=os.path.join(interface_dir, "pddl", "domain.pddl"),
         description='PDDL Model file'
     )
 
     declare_problem_file_cmd = DeclareLaunchArgument(
         'problem_file', 
-        default_value=os.path.join(interface_dir, "domain", "problem.pddl"),
+        default_value=os.path.join(interface_dir, "pddl", "problem.pddl"),
         description='PDDL Problem file')
         
     declare_namespace_cmd = DeclareLaunchArgument(
@@ -131,7 +131,7 @@ def generate_launch_description():
     # ACTION NODES
     #############################################################
     move_to_wp_cmd = Node(
-        package='plansys_interface',
+        package='assignment2',
         executable='move_action_node',
         name='move_action_node',
         namespace=namespace,
@@ -139,7 +139,7 @@ def generate_launch_description():
         parameters=[])
 
     detect_marker_cmd = Node(
-        package='plansys_interface',
+        package='assignment2',
         executable='detect_markers_action_node',
         name='detect_markers_action_node',
         namespace=namespace,
@@ -147,7 +147,7 @@ def generate_launch_description():
         parameters=[])
 
     take_picture_cmd = Node(
-        package='plansys_interface',
+        package='assignment2',
         executable='take_picture_action_node',
         name='take_picture_action_node',
         namespace=namespace,
