@@ -1,4 +1,4 @@
-#include "plansys2_pddl_parser/Utils.h"
+#include "plansys2_pddl_parser/Utils.hpp"
 #include "plansys2_msgs/msg/plan.hpp"
 #include "plansys2_domain_expert/DomainExpertClient.hpp"
 #include "plansys2_planner/PlannerClient.hpp"
