@@ -93,8 +93,12 @@ ament_target_dependencies(process_last_image_action_node
 )
 
 install(DIRECTORY
-  pddl
   launch
+  urdf
+  meshes
+  worlds
+  rviz
+  pddl
   DESTINATION share/${PROJECT_NAME}
 )
 

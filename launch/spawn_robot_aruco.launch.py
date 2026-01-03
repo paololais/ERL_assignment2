@@ -11,7 +11,6 @@ def generate_launch_description():
 
     pkg_assignment2 = get_package_share_directory('assignment2')
     pkg_ros_gz_sim = get_package_share_directory('ros_gz_sim')
-    pkg_nav2_bringup = get_package_share_directory('nav2_bringup')
 
     gazebo_models_path, _ = os.path.split(pkg_assignment2)
     os.environ["GZ_SIM_RESOURCE_PATH"] += os.pathsep + gazebo_models_path
