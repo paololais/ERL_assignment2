@@ -21,7 +21,7 @@ find_package(nav2_msgs REQUIRED)
 
 add_executable(get_plan src/getplan.cpp)
 add_executable(get_plan_and_execute src/getplan_and_execute.cpp)
-add_executable(move_action_node src/move_action_node.cpp)
+add_executable(move_action_node src/actions/move_action_node.cpp)
 
 ament_target_dependencies(get_plan
   rclcpp
