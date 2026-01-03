@@ -18,7 +18,7 @@ class MoveAction : public plansys2::ActionExecutorClient
 {
 public:
   MoveAction()
-  : plansys2::ActionExecutorClient("move", 500ms),
+  : plansys2::ActionExecutorClient("navigate", 500ms),
     goal_sent_(false),
     progress_(0.0)
   {
@@ -147,7 +147,7 @@ int main(int argc, char ** argv)
 
   auto node = std::make_shared<MoveAction>();
 
-  node->set_parameter(rclcpp::Parameter("action_name", "move"));
+  node->set_parameter(rclcpp::Parameter("action_name", "navigate"));
   node->trigger_transition(lifecycle_msgs::msg::Transition::TRANSITION_CONFIGURE);
   node->trigger_transition(lifecycle_msgs::msg::Transition::TRANSITION_ACTIVATE);
 

@@ -4,10 +4,10 @@
 
 using namespace std::chrono_literals;
 
-class AskCharge : public plansys2::ActionExecutorClient
+class DetectMarker : public plansys2::ActionExecutorClient
 {
 public:
-  AskCharge()
+  DetectMarker()
   : plansys2::ActionExecutorClient("detect_marker", 1s)
   {
     progress_ = 0.0;
@@ -37,7 +37,7 @@ private:
 int main(int argc, char ** argv)
 {
   rclcpp::init(argc, argv);
-  auto node = std::make_shared<AskCharge>();
+  auto node = std::make_shared<DetectMarker>();
 
   node->set_parameter(rclcpp::Parameter("action_name", "detect_marker"));
   node->trigger_transition(lifecycle_msgs::msg::Transition::TRANSITION_CONFIGURE);

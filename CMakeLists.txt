@@ -24,6 +24,8 @@ add_executable(get_plan_and_execute src/getplan_and_execute.cpp)
 add_executable(move_action_node src/actions/move_action_node.cpp)
 add_executable(take_picture_action_node src/actions/take_picture_action_node.cpp)
 add_executable(detect_marker_action_node src/actions/detect_marker_action_node.cpp)
+add_executable(finalize_detection_phase_action_node src/actions/finalize_detection_phase_action_node.cpp)
+add_executable(process_last_image_action_node src/actions/process_last_image_action_node.cpp)
 
 ament_target_dependencies(get_plan
   rclcpp
@@ -72,6 +74,24 @@ ament_target_dependencies(detect_marker_action_node
   nav2_msgs
 )
 
+ament_target_dependencies(finalize_detection_phase_action_node
+  rclcpp
+  rclcpp_action
+  plansys2_executor
+  plansys2_msgs
+  geometry_msgs
+  nav2_msgs
+)
+
+ament_target_dependencies(process_last_image_action_node
+  rclcpp
+  rclcpp_action
+  plansys2_executor
+  plansys2_msgs
+  geometry_msgs
+  nav2_msgs
+)
+
 install(DIRECTORY
   pddl
   launch
@@ -79,7 +99,7 @@ install(DIRECTORY
 )
 
 install(TARGETS
-  get_plan get_plan_and_execute move_action_node take_picture_action_node detect_marker_action_node
+  get_plan get_plan_and_execute move_action_node take_picture_action_node detect_marker_action_node finalize_detection_phase_action_node process_last_image_action_node
   DESTINATION lib/${PROJECT_NAME}
 )
 
