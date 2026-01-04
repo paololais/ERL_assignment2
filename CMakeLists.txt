@@ -23,6 +23,13 @@ find_package(cv_bridge REQUIRED)
 find_package(OpenCV REQUIRED)
 find_package(tf2 REQUIRED)
 find_package(tf2_geometry_msgs REQUIRED)
+find_package(image_transport REQUIRED)
+
+include_directories(
+  ${cv_bridge_INCLUDE_DIRS}
+  ${OpenCV_INCLUDE_DIRS}
+  ${sensor_msgs_INCLUDE_DIRS}
+)
 find_package(yaml-cpp REQUIRED)
 find_package(ament_index_cpp REQUIRED)
 
@@ -70,6 +77,8 @@ ament_target_dependencies(move_action_node
 )
 
 
+
+# QUI MANCAVANO TUTTE LE LIBRERIE DI IMMAGINI
 ament_target_dependencies(take_picture_action_node
 rclcpp
 rclcpp_action
@@ -77,10 +86,15 @@ plansys2_executor
 plansys2_msgs
 geometry_msgs
 nav2_msgs
+  sensor_msgs      
+  cv_bridge        
+  OpenCV           
+  image_transport  
 sensor_msgs
 cv_bridge
 )
 
+# QUI MANCAVA CV_BRIDGE
 ament_target_dependencies(detect_marker_action_node
 rclcpp
 rclcpp_action
@@ -92,9 +106,10 @@ nav_msgs
 sensor_msgs          
 tf2                
 tf2_geometry_msgs
+  cv_bridge        
+  image_transport  
 cv_bridge
 )
-
 ament_target_dependencies(finalize_detection_phase_action_node
 rclcpp
 rclcpp_action
@@ -155,12 +170,7 @@ install(TARGETS
 
 if(BUILD_TESTING)
   find_package(ament_lint_auto REQUIRED)
-  # the following line skips the linter which checks for copyrights
-  # comment the line when a copyright and license is added to all source files
   set(ament_cmake_copyright_FOUND TRUE)
-  # the following line skips cpplint (only works in a git repo)
-  # comment the line when this package is in a git repo and when
-  # a copyright and license is added to all source files
   set(ament_cmake_cpplint_FOUND TRUE)
   ament_lint_auto_find_test_dependencies()
 endif()

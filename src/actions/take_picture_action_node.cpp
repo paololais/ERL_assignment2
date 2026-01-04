@@ -8,7 +8,7 @@
 #include "rclcpp_action/rclcpp_action.hpp"
 #include "geometry_msgs/msg/twist.hpp"
 #include "sensor_msgs/msg/compressed_image.hpp"
-#include "cv_bridge/cv_bridge.hpp"
+#include <cv_bridge/cv_bridge.hpp>
 #include <opencv2/opencv.hpp>
 #include <opencv2/aruco.hpp>
 
