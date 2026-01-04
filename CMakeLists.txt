@@ -17,6 +17,8 @@ find_package(plansys2_executor REQUIRED)
 find_package(rclcpp_action REQUIRED)
 find_package(geometry_msgs REQUIRED)
 find_package(nav2_msgs REQUIRED)
+find_package(yaml-cpp REQUIRED)
+find_package(ament_index_cpp REQUIRED)
 
 
 add_executable(get_plan src/getplan.cpp)
@@ -54,6 +56,12 @@ ament_target_dependencies(move_action_node
   plansys2_msgs
   geometry_msgs
   nav2_msgs
+  yaml-cpp
+  ament_index_cpp
+)
+
+target_link_libraries(move_action_node # added for yaml file of coordinates
+  yaml-cpp
 )
 
 ament_target_dependencies(take_picture_action_node
@@ -90,15 +98,19 @@ ament_target_dependencies(process_last_image_action_node
   plansys2_msgs
   geometry_msgs
   nav2_msgs
+  yaml-cpp
+  ament_index_cpp
 )
 
 install(DIRECTORY
   launch
   urdf
-  meshes
   worlds
   rviz
+  meshes
   pddl
+  maps
+  config
   DESTINATION share/${PROJECT_NAME}
 )
 
