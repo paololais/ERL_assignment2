@@ -140,8 +140,8 @@ def generate_launch_description():
 
     detect_marker_cmd = Node(
         package='assignment2',
-        executable='detect_markers_action_node',
-        name='detect_markers_action_node',
+        executable='detect_marker_action_node',
+        name='detect_marker_action_node',
         namespace=namespace,
         output='screen',
         parameters=[])
@@ -152,7 +152,15 @@ def generate_launch_description():
         name='take_picture_action_node',
         namespace=namespace,
         output='screen',
-        parameters=[])  
+        parameters=[])
+    
+    finalize_detection_phase_cmd = Node(
+        package='assignment2',
+        executable='finalize_detection_phase_action_node',
+        name='finalize_detection_phase_action_node',
+        namespace=namespace,
+        output='screen',
+        parameters=[])
         
     ld = LaunchDescription()
 
@@ -173,5 +181,6 @@ def generate_launch_description():
     ld.add_action(move_to_wp_cmd)
     ld.add_action(detect_marker_cmd)
     ld.add_action(take_picture_cmd)
+    ld.add_action(finalize_detection_phase_cmd)
     
     return ld

@@ -18,7 +18,7 @@ class MoveAction : public plansys2::ActionExecutorClient
 {
 public:
   MoveAction()
-  : plansys2::ActionExecutorClient("move", 500ms),
+  : plansys2::ActionExecutorClient("navigate", 500ms),
     goal_sent_(false),
     progress_(0.0)
   {
@@ -114,10 +114,10 @@ private:
   bool get_waypoint_coordinates(
     const std::string & wp, double & x, double & y)
   {
-    if (wp == "wp1") { x = -6.0; y = -6.0; }
-    else if (wp == "wp2") { x = -6.0; y =  6.0; }
-    else if (wp == "wp3") { x =  6.0; y = -6.0; }
-    else if (wp == "wp4") { x =  6.0; y =  6.0; }
+    if (wp == "wp_1") { x = -6.0; y = -6.0; }
+    else if (wp == "wp_2") { x = -6.0; y =  6.0; }
+    else if (wp == "wp_3") { x =  6.0; y = -6.0; }
+    else if (wp == "wp_4") { x =  6.0; y =  6.0; }
     else { return false; }
 
     return true;
@@ -147,7 +147,7 @@ int main(int argc, char ** argv)
 
   auto node = std::make_shared<MoveAction>();
 
-  node->set_parameter(rclcpp::Parameter("action_name", "move"));
+  node->set_parameter(rclcpp::Parameter("action_name", "navigate"));
   node->trigger_transition(lifecycle_msgs::msg::Transition::TRANSITION_CONFIGURE);
   node->trigger_transition(lifecycle_msgs::msg::Transition::TRANSITION_ACTIVATE);
 
