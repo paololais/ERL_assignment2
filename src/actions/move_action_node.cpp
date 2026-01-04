@@ -11,8 +11,17 @@
 #include <chrono>
 #include <string>
 #include <cmath>
+#include <map>
+#include <fstream>
+#include <yaml-cpp/yaml.h>
+#include <ament_index_cpp/get_package_share_directory.hpp>
 
 using namespace std::chrono_literals;
+
+struct Waypoint {
+  double x;
+  double y;
+};
 
 class MoveAction : public plansys2::ActionExecutorClient
 {
@@ -22,18 +31,61 @@ public:
     goal_sent_(false),
     progress_(0.0)
   {
+    // load waypoints from YAML file
+    load_waypoints();
+
     odom_ = this->create_subscription<nav_msgs::msg::Odometry>(
-      "/odom", 10,
+      "/odom", 
+      10,
       std::bind(&MoveAction::odom_callback, this, std::placeholders::_1)
     );
 
     nav2_node_ = rclcpp::Node::make_shared("move_action_nav2_client");
-    nav2_client_ =
-      rclcpp_action::create_client<nav2_msgs::action::NavigateToPose>(
-        nav2_node_, "navigate_to_pose");
+    nav2_client_ = rclcpp_action::create_client<nav2_msgs::action::NavigateToPose>(
+      nav2_node_,
+      "navigate_to_pose"
+    );
   }
 
 private:
+  void load_waypoints()
+  {
+    try {
+      // package path
+      std::string package_share_dir = ament_index_cpp::get_package_share_directory("your_package_name");
+      std::string yaml_file = package_share_dir + "/config/waypoints.yaml";
+      
+      RCLCPP_INFO(get_logger(), "Loading waypoints from: %s", yaml_file.c_str());
+      
+      // Load YAML file
+      YAML::Node config = YAML::LoadFile(yaml_file);
+      
+      if (config["waypoints"]) {
+        for (const auto& wp_node : config["waypoints"]) {
+          std::string wp_name = wp_node.first.as<std::string>();
+          double x = wp_node.second["x"].as<double>();
+          double y = wp_node.second["y"].as<double>();
+          
+          waypoints_[wp_name] = {x, y};
+          
+          RCLCPP_INFO(get_logger(), "Loaded waypoint %s: (%.2f, %.2f)", wp_name.c_str(), x, y);
+        }
+      }
+      
+      RCLCPP_INFO(get_logger(), "Loaded %zu waypoints", waypoints_.size());
+      
+    } catch (const std::exception& e) {
+      RCLCPP_ERROR(get_logger(), "Failed to load waypoints: %s", e.what());
+      RCLCPP_WARN(get_logger(), "Using default waypoints as fallback");
+      
+      // Fallback ai waypoint di default
+      waypoints_["wp1"] = {-6.0, -6.0};
+      waypoints_["wp2"] = {-6.0,  6.0};
+      waypoints_["wp3"] = { 6.0, -6.0};
+      waypoints_["wp4"] = { 6.0,  6.0};
+    }
+  }
+
   void do_work() override
   {
     auto args = get_arguments();
@@ -72,10 +124,7 @@ private:
         [this, target_wp](const auto & result)
         {
           if (result.code != rclcpp_action::ResultCode::SUCCEEDED) {
-            RCLCPP_ERROR(
-              get_logger(),
-              "Navigation to %s failed",
-              target_wp.c_str());
+            RCLCPP_ERROR(get_logger(), "Navigation to %s failed", target_wp.c_str());
             finish(false, 1.0, "Navigation failed");
           }
         };
@@ -86,10 +135,7 @@ private:
       start_y_ = current_y_;
       goal_sent_ = true;
 
-      RCLCPP_INFO(
-        get_logger(),
-        "Moving to waypoint %s (%.2f, %.2f)",
-        target_wp.c_str(), goal_x_, goal_y_);
+      RCLCPP_INFO(get_logger(), "Moving to waypoint %s (%.2f, %.2f)", target_wp.c_str(), goal_x_, goal_y_);
     }
 
     double total_dist = std::hypot(goal_x_ - start_x_, goal_y_ - start_y_);
@@ -111,20 +157,17 @@ private:
     rclcpp::spin_some(nav2_node_);
   }
 
-  bool get_waypoint_coordinates(
-    const std::string & wp, double & x, double & y)
-  {
-    if (wp == "wp1") { x = -6.0; y = -6.0; }
-    else if (wp == "wp2") { x = -6.0; y =  6.0; }
-    else if (wp == "wp3") { x =  6.0; y = -6.0; }
-    else if (wp == "wp4") { x =  6.0; y =  6.0; }
-    else { return false; }
-
-    return true;
+  bool get_waypoint_coordinates(const std::string & wp, double & x, double & y) {
+    auto it = waypoints_.find(wp);
+    if (it != waypoints_.end()) {
+      x = it->second.x;
+      y = it->second.y;
+      return true;
+    }
+    return false;
   }
 
-  void odom_callback(const nav_msgs::msg::Odometry::SharedPtr msg)
-  {
+  void odom_callback(const nav_msgs::msg::Odometry::SharedPtr msg) {
     current_x_ = msg->pose.pose.position.x;
     current_y_ = msg->pose.pose.position.y;
   }
@@ -135,6 +178,8 @@ private:
   double start_x_{0.0}, start_y_{0.0};
   double current_x_{0.0}, current_y_{0.0};
   double goal_x_{0.0}, goal_y_{0.0};
+
+  std::map<std::string, Waypoint> waypoints_;
 
   rclcpp::Node::SharedPtr nav2_node_;
   rclcpp_action::Client<nav2_msgs::action::NavigateToPose>::SharedPtr nav2_client_;
