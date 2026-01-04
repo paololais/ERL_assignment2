@@ -24,6 +24,8 @@
   <depend>plansys2_pddl_parser</depend>
   <depend>plansys2_core</depend>
 
+  <depend>yaml-cpp</depend>
+  <depend>ament_index_cpp</depend>
 
   <!-- Messages -->
   <depend>geometry_msgs</depend>
