@@ -1,7 +1,6 @@
 #include <memory>
 #include <algorithm>
 #include <cmath>
-#include <set>
 #include <vector>
 
 // PlanSys2 & ROS 2
@@ -20,7 +19,7 @@
 #include <opencv2/opencv.hpp>
 #include <opencv2/aruco.hpp>
 
-// TF2 (Quaternion to Euler)
+// TF2
 #include "tf2/LinearMath/Quaternion.h"
 #include "tf2/LinearMath/Matrix3x3.h"
 #include "tf2_geometry_msgs/tf2_geometry_msgs.hpp"
@@ -33,7 +32,7 @@ public:
   DetectMarker()
   : plansys2::ActionExecutorClient("detect_marker", 50ms)
   {
-    // --- Publishers & Subscribers ---
+    // Publishers & Subscribers
     cmd_vel_pub_ = this->create_publisher<geometry_msgs::msg::Twist>("/cmd_vel", 10);
     
     odom_sub_ = this->create_subscription<nav_msgs::msg::Odometry>(
@@ -42,11 +41,11 @@ public:
     image_sub_ = this->create_subscription<sensor_msgs::msg::CompressedImage>(
       "/camera/image/compressed", 10, std::bind(&DetectMarker::image_callback, this, std::placeholders::_1));
 
-    // --- ArUco Setup ---
+    // ArUco Setup
     aruco_dict_ = cv::aruco::getPredefinedDictionary(cv::aruco::DICT_4X4_50);
     aruco_params_ = cv::aruco::DetectorParameters::create();
 
-    // Declare parameter to share found IDs with other nodes
+    // Parametro per condividere l'ID trovato
     this->declare_parameter("detected_ids", std::vector<int64_t>({}));
   }
 
@@ -54,13 +53,16 @@ public:
   rclcpp_lifecycle::node_interfaces::LifecycleNodeInterface::CallbackReturn
   on_activate(const rclcpp_lifecycle::State & previous_state)
   {
-    // Reset state variables
+    // Reset variabili
     total_rotated_ = 0.0;
     first_yaw_read_ = false;
-    detected_ids_.clear();
     progress_ = 0.0;
     
-    RCLCPP_INFO(get_logger(), "DetectMarker Action Started. Rotating 360...");
+    // Reset della ricerca del "migliore"
+    best_id_ = -1;
+    max_area_ = 0.0;
+    
+    RCLCPP_INFO(get_logger(), "START: DetectMarker Action. Scanning for the CLOSEST marker...");
     return ActionExecutorClient::on_activate(previous_state);
   }
 
@@ -71,7 +73,10 @@ private:
 
   cv::Ptr<cv::aruco::Dictionary> aruco_dict_;
   cv::Ptr<cv::aruco::DetectorParameters> aruco_params_;
-  std::set<int> detected_ids_;
+
+  // Variabili per la logica "Closest"
+  int best_id_;       // L'ID del marker più vicino trovato finora
+  double max_area_;   // La grandezza massima vista finora
 
   double current_yaw_;
   double prev_yaw_;
@@ -100,7 +105,7 @@ private:
     }
   }
 
-  // --- Image Callback ---
+  // --- Image Callback (Logica modificata) ---
   void image_callback(const sensor_msgs::msg::CompressedImage::SharedPtr msg)
   {
     if (get_current_state().id() != lifecycle_msgs::msg::State::PRIMARY_STATE_ACTIVE) return;
@@ -114,10 +119,19 @@ private:
       cv::aruco::detectMarkers(image, aruco_dict_, corners, ids, aruco_params_);
 
       if (!ids.empty()) {
-        for (int id : ids) {
-          if (detected_ids_.find(id) == detected_ids_.end()) {
-            detected_ids_.insert(id);
-            RCLCPP_INFO(get_logger(), "Found Marker ID: %d", id);
+        for (size_t i = 0; i < ids.size(); ++i) {
+          int current_id = ids[i];
+          
+          // Calcola l'AREA del marker (in pixel quadrati)
+          // Area più grande = Marker più vicino
+          double current_area = cv::contourArea(corners[i]);
+
+          // Se questo marker è più grande (vicino) di quello che ho visto finora...
+          if (current_area > max_area_) {
+            max_area_ = current_area;
+            best_id_ = current_id;
+            
+            RCLCPP_INFO(get_logger(), "Candidate: ID %d is closest (Area: %.0f)", best_id_, max_area_);
           }
         }
       }
@@ -129,7 +143,7 @@ private:
   {
     if (!first_yaw_read_) return;
 
-    // Calculate rotation delta handling wrap-around
+    // Calcolo rotazione
     double delta_yaw = current_yaw_ - prev_yaw_;
     while (delta_yaw > M_PI) delta_yaw -= 2.0 * M_PI;
     while (delta_yaw < -M_PI) delta_yaw += 2.0 * M_PI;
@@ -137,25 +151,33 @@ private:
     total_rotated_ += std::abs(delta_yaw);
     prev_yaw_ = current_yaw_;
 
-    // Check if full rotation (approx 6.28 rad) is done. Using 6.4 for overlap.
+    // Ruota per poco più di 360 gradi (6.4 rad) per essere sicuri
     if (total_rotated_ < 6.4) {
       geometry_msgs::msg::Twist cmd;
-      cmd.angular.z = 0.5; // High speed for skid-steer
+      cmd.angular.z = 0.5; 
       cmd_vel_pub_->publish(cmd);
       
       progress_ = std::min(1.0, total_rotated_ / 6.4);
-      send_feedback(progress_, "Scanning environment...");
+      send_feedback(progress_, "Scanning 360...");
     } else {
-      // Stop
+      // STOP
       geometry_msgs::msg::Twist cmd;
       cmd.angular.z = 0.0;
       cmd_vel_pub_->publish(cmd);
 
-      // Save detected IDs to parameter for the next node
-      std::vector<int64_t> ids_vec(detected_ids_.begin(), detected_ids_.end());
-      this->set_parameter(rclcpp::Parameter("detected_ids", ids_vec));
+      // --- SALVATAGGIO ID ---
+      std::vector<int64_t> result_vec;
+      
+      if (best_id_ != -1) {
+        // Se abbiamo trovato qualcosa, salviamo SOLO il migliore
+        result_vec.push_back(best_id_);
+        RCLCPP_INFO(get_logger(), "SCAN FINISHED. Closest Marker: %d", best_id_);
+      } else {
+        RCLCPP_WARN(get_logger(), "SCAN FINISHED. No markers detected!");
+      }
 
-      RCLCPP_INFO(get_logger(), "Scan Complete. Total markers: %lu", detected_ids_.size());
+      this->set_parameter(rclcpp::Parameter("detected_ids", result_vec));
+
       finish(true, 1.0, "DetectMarker completed");
     }
   }
