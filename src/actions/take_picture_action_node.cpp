@@ -26,7 +26,7 @@ public:
     image_sub_ = this->create_subscription<sensor_msgs::msg::CompressedImage>(
       "/camera/image/compressed", 10, std::bind(&TakePicture::image_callback, this, std::placeholders::_1));
 
-    aruco_dict_ = cv::aruco::getPredefinedDictionary(cv::aruco::DICT_4X4_50);
+    aruco_dict_ = cv::aruco::getPredefinedDictionary(cv::aruco::DICT_ARUCO_ORIGINAL);
     aruco_params_ = cv::aruco::DetectorParameters::create();
   }
 

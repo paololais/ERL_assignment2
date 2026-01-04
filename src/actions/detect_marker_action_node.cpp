@@ -43,7 +43,7 @@ public:
       "/camera/image/compressed", 10, std::bind(&DetectMarker::image_callback, this, std::placeholders::_1));
 
     // --- ArUco Setup ---
-    aruco_dict_ = cv::aruco::getPredefinedDictionary(cv::aruco::DICT_4X4_50);
+    aruco_dict_ = cv::aruco::getPredefinedDictionary(cv::aruco::DICT_ARUCO_ORIGINAL);
     aruco_params_ = cv::aruco::DetectorParameters::create();
 
     // Declare parameter to share found IDs with other nodes
