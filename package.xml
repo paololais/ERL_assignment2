@@ -3,19 +3,17 @@
 <package format="3">
   <name>assignment2</name>
   <version>0.0.0</version>
-  <description>ERL Assignment 2</description>
-
+  <description>ERL Assignment 2 - PlanSys2 with ArUco Detection</description>
   <maintainer email="paolo.lais1@gmail.com">Paolo</maintainer>
   <license>Apache-2.0</license>
 
-  <!-- Build system -->
-  <buildtool_depend>ament_python</buildtool_depend>
-
-  <!-- Core ROS 2 Python -->
+  <buildtool_depend>ament_cmake</buildtool_depend>
+   
+  
+  <depend>rclcpp</depend>
+  <depend>rclcpp_action</depend>
   <depend>rclpy</depend>
-  <depend>rclpy_action</depend>
 
-  <!-- PlanSys2 -->
   <depend>plansys2_msgs</depend>
   <depend>plansys2_executor</depend>
   <depend>plansys2_domain_expert</depend>
@@ -24,12 +22,19 @@
   <depend>plansys2_pddl_parser</depend>
   <depend>plansys2_core</depend>
 
-
-  <!-- Messages -->
   <depend>geometry_msgs</depend>
   <depend>nav2_msgs</depend>
+  <depend>nav_msgs</depend>
+  <depend>sensor_msgs</depend>
 
-  <!-- Testing -->
+  <depend>cv_bridge</depend>
+  <depend>opencv2</depend>
+  <depend>tf2</depend>
+  <depend>tf2_geometry_msgs</depend>
+  <depend>tf2_ros</depend>
+
+  <test_depend>ament_lint_auto</test_depend>
+  <test_depend>ament_lint_common</test_depend>
   <test_depend>ament_copyright</test_depend>
   <test_depend>ament_flake8</test_depend>
   <test_depend>ament_pep257</test_depend>

@@ -17,6 +17,12 @@ find_package(plansys2_executor REQUIRED)
 find_package(rclcpp_action REQUIRED)
 find_package(geometry_msgs REQUIRED)
 find_package(nav2_msgs REQUIRED)
+find_package(nav_msgs REQUIRED)
+find_package(sensor_msgs REQUIRED)
+find_package(cv_bridge REQUIRED)
+find_package(OpenCV REQUIRED)
+find_package(tf2 REQUIRED)
+find_package(tf2_geometry_msgs REQUIRED)
 
 
 add_executable(get_plan src/getplan.cpp)
@@ -72,6 +78,11 @@ ament_target_dependencies(detect_marker_action_node
   plansys2_msgs
   geometry_msgs
   nav2_msgs
+  nav_msgs           
+  sensor_msgs        
+  OpenCV             
+  tf2                
+  tf2_geometry_msgs
 )
 
 ament_target_dependencies(finalize_detection_phase_action_node
@@ -81,6 +92,7 @@ ament_target_dependencies(finalize_detection_phase_action_node
   plansys2_msgs
   geometry_msgs
   nav2_msgs
+  plansys2_problem_expert  
 )
 
 ament_target_dependencies(process_last_image_action_node
@@ -90,6 +102,9 @@ ament_target_dependencies(process_last_image_action_node
   plansys2_msgs
   geometry_msgs
   nav2_msgs
+  sensor_msgs        
+  cv_bridge          
+  OpenCV             
 )
 
 install(DIRECTORY
