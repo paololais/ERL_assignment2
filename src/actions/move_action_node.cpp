@@ -52,7 +52,7 @@ private:
   {
     try {
       // package path
-      std::string package_share_dir = ament_index_cpp::get_package_share_directory("your_package_name");
+      std::string package_share_dir = ament_index_cpp::get_package_share_directory("assignment2");
       std::string yaml_file = package_share_dir + "/config/waypoints.yaml";
       
       RCLCPP_INFO(get_logger(), "Loading waypoints from: %s", yaml_file.c_str());
@@ -147,7 +147,7 @@ private:
 
     send_feedback(progress_, "Moving to " + target_wp);
 
-    if (rem_dist < 1.0) {
+    if (rem_dist < 2.0) {
       goal_sent_ = false;
       progress_ = 1.0;
       RCLCPP_INFO(get_logger(), "Reached waypoint %s", target_wp.c_str());
