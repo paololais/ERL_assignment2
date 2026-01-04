@@ -79,10 +79,10 @@ private:
       RCLCPP_WARN(get_logger(), "Using default waypoints as fallback");
       
       // Fallback ai waypoint di default
-      waypoints_["wp1"] = {-6.0, -6.0};
-      waypoints_["wp2"] = {-6.0,  6.0};
-      waypoints_["wp3"] = { 6.0, -6.0};
-      waypoints_["wp4"] = { 6.0,  6.0};
+      waypoints_["wp_1"] = {-6.0, -6.0};
+      waypoints_["wp_2"] = {-6.0,  6.0};
+      waypoints_["wp_3"] = { 6.0, -6.0};
+      waypoints_["wp_4"] = { 6.0,  6.0};
     }
   }
 
