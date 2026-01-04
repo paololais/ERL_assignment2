@@ -17,9 +17,18 @@ find_package(plansys2_executor REQUIRED)
 find_package(rclcpp_action REQUIRED)
 find_package(geometry_msgs REQUIRED)
 find_package(nav2_msgs REQUIRED)
+find_package(nav_msgs REQUIRED)
+find_package(sensor_msgs REQUIRED)
+find_package(cv_bridge REQUIRED)
+find_package(OpenCV REQUIRED)
+find_package(tf2 REQUIRED)
+find_package(tf2_geometry_msgs REQUIRED)
 find_package(yaml-cpp REQUIRED)
 find_package(ament_index_cpp REQUIRED)
 
+include_directories(
+  ${OpenCV_INCLUDE_DIRS}
+)
 
 add_executable(get_plan src/getplan.cpp)
 add_executable(get_plan_and_execute src/getplan_and_execute.cpp)
@@ -60,46 +69,71 @@ ament_target_dependencies(move_action_node
   ament_index_cpp
 )
 
+
+ament_target_dependencies(take_picture_action_node
+rclcpp
+rclcpp_action
+plansys2_executor
+plansys2_msgs
+geometry_msgs
+nav2_msgs
+sensor_msgs
+cv_bridge
+)
+
+ament_target_dependencies(detect_marker_action_node
+rclcpp
+rclcpp_action
+plansys2_executor
+plansys2_msgs
+geometry_msgs
+nav2_msgs
+nav_msgs           
+sensor_msgs          
+tf2                
+tf2_geometry_msgs
+cv_bridge
+)
+
+ament_target_dependencies(finalize_detection_phase_action_node
+rclcpp
+rclcpp_action
+plansys2_executor
+plansys2_msgs
+geometry_msgs
+nav2_msgs
+plansys2_problem_expert
+sensor_msgs
+cv_bridge
+)
+
+ament_target_dependencies(process_last_image_action_node
+rclcpp
+rclcpp_action
+plansys2_executor
+plansys2_msgs
+geometry_msgs
+nav2_msgs
+sensor_msgs        
+cv_bridge       
+yaml-cpp
+ament_index_cpp
+)
+
 target_link_libraries(move_action_node # added for yaml file of coordinates
   yaml-cpp
 )
 
-ament_target_dependencies(take_picture_action_node
-  rclcpp
-  rclcpp_action
-  plansys2_executor
-  plansys2_msgs
-  geometry_msgs
-  nav2_msgs
+target_link_libraries(take_picture_action_node
+  ${OpenCV_LIBRARIES}
 )
 
-ament_target_dependencies(detect_marker_action_node
-  rclcpp
-  rclcpp_action
-  plansys2_executor
-  plansys2_msgs
-  geometry_msgs
-  nav2_msgs
+target_link_libraries(detect_marker_action_node
+  ${OpenCV_LIBRARIES}
 )
 
-ament_target_dependencies(finalize_detection_phase_action_node
-  rclcpp
-  rclcpp_action
-  plansys2_executor
-  plansys2_msgs
-  geometry_msgs
-  nav2_msgs
-)
-
-ament_target_dependencies(process_last_image_action_node
-  rclcpp
-  rclcpp_action
-  plansys2_executor
-  plansys2_msgs
-  geometry_msgs
-  nav2_msgs
-  yaml-cpp
-  ament_index_cpp
+target_link_libraries(process_last_image_action_node
+  ${OpenCV_LIBRARIES}
 )
 
 install(DIRECTORY
