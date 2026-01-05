@@ -3,6 +3,7 @@
 #include <vector>
 #include <string>
 #include <iostream>
+#include <sstream>
 
 // PlanSys2
 #include "plansys2_executor/ActionExecutorClient.hpp"
@@ -11,6 +12,8 @@
 // ROS 2 Core & Parameters
 #include "rclcpp/rclcpp.hpp"
 #include "rclcpp_action/rclcpp_action.hpp"
+#include "std_msgs/msg/string.hpp"
+#include "lifecycle_msgs/msg/transition.hpp"
 
 using namespace std::chrono_literals;
 
@@ -26,6 +29,9 @@ public:
     // Client per leggere i parametri dagli altri nodi
     // "detect_marker" è il nome del nodo (definito nel main dell'altro file)
     parameters_client_ = std::make_shared<rclcpp::SyncParametersClient>(this, "detect_marker");
+    
+    // Publisher per inviare l'ordine dei marker al Controller
+    marker_order_pub_ = this->create_publisher<std_msgs::msg::String>("/marker_order", 10);
   }
 
   rclcpp_lifecycle::node_interfaces::LifecycleNodeInterface::CallbackReturn
@@ -38,6 +44,7 @@ public:
 private:
   std::shared_ptr<plansys2::ProblemExpertClient> problem_expert_;
   std::shared_ptr<rclcpp::SyncParametersClient> parameters_client_;
+  rclcpp::Publisher<std_msgs::msg::String>::SharedPtr marker_order_pub_;
 
   void do_work()
   {
@@ -49,6 +56,7 @@ private:
     if (!parameters_client_->wait_for_service(1s)) {
       if (!rclcpp::ok()) {
         RCLCPP_ERROR(get_logger(), "Interrupted while waiting for the service. Exiting.");
+        finish(false, 0.0, "Service interrupted");
         return;
       }
       RCLCPP_WARN(get_logger(), "Node 'detect_marker' not available. Using empty list.");
@@ -89,20 +97,36 @@ private:
       std::string predicate = "(marker_detected " + marker_name + ")";
       
       try {
-        // problem_expert_->addPredicate(plansys2::Predicate(predicate));
-        RCLCPP_INFO(get_logger(), "Updated KB: %s is detected.", marker_name.c_str());
+        if (problem_expert_->addPredicate(plansys2::Predicate(predicate))) {
+          RCLCPP_INFO(get_logger(), "Updated KB: %s is detected.", marker_name.c_str());
+        }
       } catch (const std::exception &e) {
         RCLCPP_WARN(get_logger(), "KB Update Failed for %s: %s", marker_name.c_str(), e.what());
       }
     }
 
-    // Se non abbiamo trovato nulla, potremmo voler fallire l'azione? 
-    // Per ora terminiamo con successo comunque.
-    if (sorted_ids.empty()) {
+    // --- 4. PUBBLICA L'ORDINE DEI MARKER AL CONTROLLER ---
+    if (!sorted_ids.empty()) {
+      std::stringstream marker_order_stream;
+      for (size_t i = 0; i < sorted_ids.size(); i++) {
+        marker_order_stream << "marker_" << sorted_ids[i];
+        if (i < sorted_ids.size() - 1) {
+          marker_order_stream << " ";
+        }
+      }
+      
+      std_msgs::msg::String msg;
+      msg.data = marker_order_stream.str();
+      marker_order_pub_->publish(msg);
+      
+      RCLCPP_INFO(get_logger(), "Published marker order: %s", msg.data.c_str());
+    } else {
       RCLCPP_WARN(get_logger(), "WARNING: No markers were detected in the previous phase!");
+      finish(false, 0.0, "No markers detected");
+      return;
     }
 
-    finish(true, 1.0, "Detection Phase Finalized");
+    finish(true, 1.0, "Detection Phase Finalized and Marker Order Published");
   }
 };
 
@@ -113,6 +137,7 @@ int main(int argc, char ** argv)
 
   node->set_parameter(rclcpp::Parameter("action_name", "finalize_exploration"));
   node->trigger_transition(lifecycle_msgs::msg::Transition::TRANSITION_CONFIGURE);
+  node->trigger_transition(lifecycle_msgs::msg::Transition::TRANSITION_ACTIVATE);
 
   rclcpp::spin(node->get_node_base_interface());
 

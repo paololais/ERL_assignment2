@@ -76,63 +76,59 @@ ament_target_dependencies(move_action_node
   ament_index_cpp
 )
 
-
-
-# QUI MANCAVANO TUTTE LE LIBRERIE DI IMMAGINI
 ament_target_dependencies(take_picture_action_node
-rclcpp
-rclcpp_action
-plansys2_executor
-plansys2_msgs
-geometry_msgs
-nav2_msgs
+  rclcpp
+  rclcpp_action
+  plansys2_executor
+  plansys2_msgs
+  geometry_msgs
+  nav2_msgs
   sensor_msgs      
   cv_bridge        
   OpenCV           
   image_transport  
-sensor_msgs
-cv_bridge
+  sensor_msgs
+  cv_bridge
 )
 
-# QUI MANCAVA CV_BRIDGE
 ament_target_dependencies(detect_marker_action_node
-rclcpp
-rclcpp_action
-plansys2_executor
-plansys2_msgs
-geometry_msgs
-nav2_msgs
-nav_msgs           
-sensor_msgs          
-tf2                
-tf2_geometry_msgs
+  rclcpp
+  rclcpp_action
+  plansys2_executor
+  plansys2_msgs
+  geometry_msgs
+  nav2_msgs
+  nav_msgs           
+  sensor_msgs          
+  tf2                
+  tf2_geometry_msgs
   cv_bridge        
-  image_transport  
-cv_bridge
+  image_transport
 )
+
 ament_target_dependencies(finalize_detection_phase_action_node
-rclcpp
-rclcpp_action
-plansys2_executor
-plansys2_msgs
-geometry_msgs
-nav2_msgs
-plansys2_problem_expert
-sensor_msgs
-cv_bridge
+  rclcpp
+  rclcpp_action
+  plansys2_executor
+  plansys2_msgs
+  geometry_msgs
+  nav2_msgs
+  plansys2_problem_expert
+  sensor_msgs
+  cv_bridge
 )
 
 ament_target_dependencies(process_last_image_action_node
-rclcpp
-rclcpp_action
-plansys2_executor
-plansys2_msgs
-geometry_msgs
-nav2_msgs
-sensor_msgs        
-cv_bridge       
-yaml-cpp
-ament_index_cpp
+  rclcpp
+  rclcpp_action
+  plansys2_executor
+  plansys2_msgs
+  geometry_msgs
+  nav2_msgs
+  sensor_msgs        
+  cv_bridge       
+  yaml-cpp
+  ament_index_cpp
 )
 
 target_link_libraries(move_action_node # added for yaml file of coordinates
