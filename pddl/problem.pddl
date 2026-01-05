@@ -20,10 +20,7 @@
 
     ;; GOAL FASE 1: Trova tutto.
     ;; Non chiediamo ancora di processarli, perché non sappiamo l'ordine.
-    (:goal (and
-        (marker_detected marker_1)
-        (marker_detected marker_2)
-        (marker_detected marker_3)
-        (marker_detected marker_4)
-    ))
+    (:goal 
+        (exploration_done)
+    )
 )
