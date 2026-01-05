@@ -24,7 +24,7 @@ class ProcessLastImage : public plansys2::ActionExecutorClient
 {
 public:
   ProcessLastImage()
-  : plansys2::ActionExecutorClient("process_last_image", 50ms)
+  : plansys2::ActionExecutorClient("process_next", 50ms)
   {
     // --- Publishers & Subscribers ---
     
@@ -238,7 +238,7 @@ int main(int argc, char ** argv)
   rclcpp::init(argc, argv);
   auto node = std::make_shared<ProcessLastImage>();
 
-  node->set_parameter(rclcpp::Parameter("action_name", "process_last_image"));
+  node->set_parameter(rclcpp::Parameter("action_name", "process_next"));
   node->trigger_transition(lifecycle_msgs::msg::Transition::TRANSITION_CONFIGURE);
 
   rclcpp::spin(node->get_node_base_interface());

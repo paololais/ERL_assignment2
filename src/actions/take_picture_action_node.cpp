@@ -18,7 +18,7 @@ class TakePicture : public plansys2::ActionExecutorClient
 {
 public:
   TakePicture()
-  : plansys2::ActionExecutorClient("take_picture", 50ms)
+  : plansys2::ActionExecutorClient("process_first", 50ms)
   {
     cmd_vel_pub_ = this->create_publisher<geometry_msgs::msg::Twist>("/cmd_vel", 10);
     result_img_pub_ = this->create_publisher<sensor_msgs::msg::CompressedImage>(
@@ -133,7 +133,7 @@ int main(int argc, char ** argv)
 {
   rclcpp::init(argc, argv);
   auto node = std::make_shared<TakePicture>();
-  node->set_parameter(rclcpp::Parameter("action_name", "take_picture"));
+  node->set_parameter(rclcpp::Parameter("action_name", "process_first"));
   node->trigger_transition(lifecycle_msgs::msg::Transition::TRANSITION_CONFIGURE);
   rclcpp::spin(node->get_node_base_interface());
   rclcpp::shutdown();

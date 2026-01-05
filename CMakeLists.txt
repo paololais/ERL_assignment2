@@ -24,14 +24,20 @@ find_package(OpenCV REQUIRED)
 find_package(tf2 REQUIRED)
 find_package(tf2_geometry_msgs REQUIRED)
 find_package(image_transport REQUIRED)
+find_package(rosidl_default_generators REQUIRED)
+find_package(yaml-cpp REQUIRED)
+find_package(ament_index_cpp REQUIRED)
+
+# Add message generation
+rosidl_generate_interfaces(${PROJECT_NAME}
+  "msg/MarkerDetection.msg"
+)
 
 include_directories(
   ${cv_bridge_INCLUDE_DIRS}
   ${OpenCV_INCLUDE_DIRS}
   ${sensor_msgs_INCLUDE_DIRS}
 )
-find_package(yaml-cpp REQUIRED)
-find_package(ament_index_cpp REQUIRED)
 
 include_directories(
   ${OpenCV_INCLUDE_DIRS}
@@ -131,24 +137,41 @@ ament_target_dependencies(process_last_image_action_node
   ament_index_cpp
 )
 
-target_link_libraries(move_action_node # added for yaml file of coordinates
+# Make executables depend on message generation
+rosidl_get_typesupport_target(cpp_typesupport_target
+  ${PROJECT_NAME} rosidl_typesupport_cpp)
+
+target_link_libraries(get_plan
+  "${cpp_typesupport_target}"
+)
+
+target_link_libraries(get_plan_and_execute
+  "${cpp_typesupport_target}"
+)
+
+target_link_libraries(move_action_node
   yaml-cpp
+  "${cpp_typesupport_target}"
 )
 
 target_link_libraries(take_picture_action_node
   ${OpenCV_LIBRARIES}
+  "${cpp_typesupport_target}"
 )
 
 target_link_libraries(detect_marker_action_node
   ${OpenCV_LIBRARIES}
+  "${cpp_typesupport_target}"
 )
 
 target_link_libraries(process_last_image_action_node
   ${OpenCV_LIBRARIES}
+  "${cpp_typesupport_target}"
 )
 
 install(DIRECTORY
   launch
+  msg
   urdf
   worlds
   rviz
@@ -170,7 +193,5 @@ if(BUILD_TESTING)
   set(ament_cmake_cpplint_FOUND TRUE)
   ament_lint_auto_find_test_dependencies()
 endif()
-
-ament_python_install_package(assignment2)
 
 ament_package()
