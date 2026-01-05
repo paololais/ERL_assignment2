@@ -166,6 +166,7 @@ private:
   {
     if (msg->action_full_name != ":0") {
       action_completion_map_[msg->action_full_name] = msg->completion;
+      action_status_map_[msg->action_full_name] = msg->status;
       std::cout << "Action: " << msg->action_full_name
                 << " | Completion: " << (msg->completion * 100.0) << "%"
                 << " | Status: ";
@@ -194,7 +195,20 @@ private:
       }
     }
 
-    if (all_done && !action_completion_map_.empty() && plan_in_execution_) {
+    // Also check that all actions have SUCCEEDED status (not just 100% completion)
+    if (all_done && !action_completion_map_.empty()) {
+      for (const auto & a : action_status_map_) {
+        if (a.second != plansys2_msgs::msg::ActionExecutionInfo::SUCCEEDED) {
+          all_done = false;
+          RCLCPP_INFO(this->get_logger(),
+            "Action %s did not succeed (status: %d)",
+            a.first.c_str(), a.second);
+          break;
+        }
+      }
+    }
+
+    if (all_done && plan_in_execution_) {
       plan_in_execution_ = false;
 
       if (current_phase_ == PlanningPhase::INITIAL) {
@@ -224,6 +238,7 @@ private:
 
   std::map<int, MarkerInfo> detected_markers_;
   std::map<std::string, float> action_completion_map_;
+  std::map<std::string, uint8_t> action_status_map_;
 
   bool plan_in_execution_;
   PlanningPhase current_phase_;
