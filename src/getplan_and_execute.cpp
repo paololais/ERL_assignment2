@@ -6,8 +6,9 @@
 #include <iostream>
 
 #include "rclcpp/rclcpp.hpp"
+#include "rclcpp_action/rclcpp_action.hpp"
 
-#include "plansys2_pddl_parser/Utils.hpp"
+#include "plansys2_pddl_parser/Utils.h"
 #include "plansys2_msgs/msg/action_execution_info.hpp"
 #include "plansys2_msgs/msg/plan.hpp"
 #include "plansys2_domain_expert/DomainExpertClient.hpp"
@@ -30,19 +31,26 @@ std::ostream& operator<<(std::ostream& os, const plansys2_msgs::msg::Plan & plan
     return os;
 }
 
+std::ostream& operator<<(std::ostream& os, const plansys2_msgs::action::ExecutePlan_Result & res)
+{
+    os << "ExecutePlan_Result { ";
+    os << "success: " << (res.success ? "true" : "false");
+    os << " }";
+    return os;
+}
+
 class Controller : public rclcpp::Node
 {
 public:
   Controller()
-  : Node("controller"),
+  : rclcpp::Node("controller"),
     plan_in_execution_(false),
-    markers_ready_(false),
     current_phase_(PlanningPhase::INITIAL)
   {}
 
   void init()
   {
-    domain_expert_  = std::make_shared<plansys2::DomainExpertClient>();
+    domain_expert_ = std::make_shared<plansys2::DomainExpertClient>();
     planner_client_ = std::make_shared<plansys2::PlannerClient>();
     problem_expert_ = std::make_shared<plansys2::ProblemExpertClient>();
     executor_client_ = std::make_shared<plansys2::ExecutorClient>();
@@ -51,13 +59,29 @@ public:
       "/marker_detection", 10,
       std::bind(&Controller::marker_callback, this, _1));
 
-    action_feedback_sub_ =
-      this->create_subscription<plansys2_msgs::msg::ActionExecutionInfo>(
-        "/action_execution_info", 10,
-        std::bind(&Controller::action_feedback_callback, this, _1));
+    action_feedback_sub_ = this->create_subscription<plansys2_msgs::msg::ActionExecutionInfo>(
+      "/action_execution_info", 10,
+      std::bind(&Controller::action_feedback_callback, this, _1));
 
     RCLCPP_INFO(this->get_logger(), "Controller initialized – starting exploration plan");
-    plan();
+  }
+
+  void plan()
+  {
+    auto domain = domain_expert_->getDomain();
+    auto problem = problem_expert_->getProblem();
+    auto plan = planner_client_->getPlan(domain, problem);
+
+    if (!plan.has_value()) {
+      std::cout << "Could not find plan to reach goal " <<
+        parser::pddl::toString(problem_expert_->getGoal()) << std::endl;
+      return;
+    }
+
+    std::cout << plan.value() << std::endl;
+    plan_in_execution_ = true;
+    action_completion_map_.clear();
+    executor_client_->start_plan_execution(plan.value());
   }
 
 private:
@@ -91,28 +115,6 @@ private:
     RCLCPP_INFO(this->get_logger(),
       "Detected marker: %s (id=%d) at waypoint %s",
       info.name.c_str(), info.id, info.waypoint.c_str());
-  }
-
-  /* ---------------- PLANNING ---------------- */
-
-  void plan()
-  {
-    auto domain = domain_expert_->getDomain();
-    auto problem = problem_expert_->getProblem();
-    auto plan = planner_client_->getPlan(domain, problem);
-
-    if (!plan.has_value()) {
-      RCLCPP_ERROR(this->get_logger(),
-        "Failed to find plan for goal %s",
-        parser::pddl::toString(problem_expert_->getGoal()).c_str());
-      return;
-    }
-
-    std::cout << plan.value() << std::endl;
-
-    plan_in_execution_ = true;
-    action_completion_.clear();
-    executor_client_->start_plan_execution(plan.value());
   }
 
   /* ---------------- UPDATE KB AFTER EXPLORATION ---------------- */
@@ -160,33 +162,52 @@ private:
 
   /* ---------------- ACTION FEEDBACK ---------------- */
 
-  void action_feedback_callback(
-    const plansys2_msgs::msg::ActionExecutionInfo::SharedPtr msg)
+  void action_feedback_callback(const plansys2_msgs::msg::ActionExecutionInfo::SharedPtr msg)
   {
-    if (msg->action_full_name == ":0") {
-      return;
+    if (msg->action_full_name != ":0") {
+      action_completion_map_[msg->action_full_name] = msg->completion;
+      std::cout << "Action: " << msg->action_full_name
+                << " | Completion: " << (msg->completion * 100.0) << "%"
+                << " | Status: ";
+      switch(msg->status) {
+        case plansys2_msgs::msg::ActionExecutionInfo::NOT_EXECUTED:
+          std::cout << "NOT_EXECUTED"; break;
+        case plansys2_msgs::msg::ActionExecutionInfo::EXECUTING:
+          std::cout << "EXECUTING"; break;
+        case plansys2_msgs::msg::ActionExecutionInfo::SUCCEEDED:
+          std::cout << "SUCCEEDED"; break;
+        case plansys2_msgs::msg::ActionExecutionInfo::FAILED:
+          std::cout << "FAILED"; break;
+        case plansys2_msgs::msg::ActionExecutionInfo::CANCELLED:
+          std::cout << "CANCELLED"; break;
+        default:
+          std::cout << "UNKNOWN"; break;
+      }
+      std::cout << std::endl;
     }
 
-    action_completion_[msg->action_full_name] = msg->completion;
-
     bool all_done = true;
-    for (const auto & kv : action_completion_) {
-      if (kv.second < 1.0) {
+    for (const auto & a : action_completion_map_) {
+      if (a.second < 1.0) {
         all_done = false;
         break;
       }
     }
 
-    if (all_done && plan_in_execution_) {
+    if (all_done && !action_completion_map_.empty() && plan_in_execution_) {
       plan_in_execution_ = false;
 
       if (current_phase_ == PlanningPhase::INITIAL) {
         RCLCPP_INFO(this->get_logger(),
           "Exploration complete - replanning for marker processing");
+        RCLCPP_INFO(this->get_logger(), "Detected %zu markers total", detected_markers_.size());
 
         update_marker_predicates_and_goal();
         current_phase_ = PlanningPhase::PROCESSING;
         plan();
+      } else if (current_phase_ == PlanningPhase::PROCESSING) {
+        std::cout << "Everything done!!" << std::endl;
+        rclcpp::shutdown();
       }
     }
   }
@@ -202,20 +223,18 @@ private:
   rclcpp::Subscription<plansys2_msgs::msg::ActionExecutionInfo>::SharedPtr action_feedback_sub_;
 
   std::map<int, MarkerInfo> detected_markers_;
-  std::map<std::string, float> action_completion_;
+  std::map<std::string, float> action_completion_map_;
 
   bool plan_in_execution_;
-  bool markers_ready_;
   PlanningPhase current_phase_;
 };
 
 int main(int argc, char ** argv)
 {
   rclcpp::init(argc, argv);
-
   auto node = std::make_shared<Controller>();
   node->init();
-
+  node->plan();
   rclcpp::spin(node);
   rclcpp::shutdown();
   return 0;

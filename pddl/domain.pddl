@@ -68,17 +68,19 @@
 
     ;;  PROCESS FIRST
     (:durative-action process_first
-        :parameters (?r - robot ?m - marker ?wp - waypoint)
+        :parameters (?r - robot ?m1 ?m2 ?m3 ?m4 - marker ?wp - waypoint)
         :duration (= ?duration 5)
         :condition (and
-            (at start (exploration_done))   ;; vincol
+            (at start (marker_detected ?m1))
+            (at start (marker_detected ?m2))
+            (at start (marker_detected ?m3))
+            (at start (marker_detected ?m4))
             (over all (robot_at ?r ?wp))
-            (over all (marker_at ?m ?wp))
-            (at start (marker_detected ?m))
-            (at start (is_first ?m))
+            (over all (marker_at ?m1 ?wp))
+            (at start (is_first ?m1))
         )
         :effect (and
-            (at end (marker_processed ?m))
+            (at end (marker_processed ?m1))
         )
     )
 
@@ -87,7 +89,6 @@
         :parameters (?r - robot ?m_prev ?m_curr - marker ?wp - waypoint)
         :duration (= ?duration 5)
         :condition (and
-            (at start (exploration_done))   ;; vincolo
             (over all (robot_at ?r ?wp))
             (over all (marker_at ?m_curr ?wp))
             (at start (marker_detected ?m_curr))
