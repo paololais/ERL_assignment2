@@ -39,6 +39,10 @@ public:
     problem_expert_ = std::make_shared<plansys2::ProblemExpertClient>();
     executor_client_ = std::make_shared<plansys2::ExecutorClient>();
 
+    // clear detected_ids parameter at start
+    //auto params_client = std::make_shared<rclcpp::SyncParametersClient>(this, "detect_marker");
+    //params_client->set_parameters({rclcpp::Parameter("detected_ids", std::vector<int64_t>{})});
+
     // Subscribe to marker order from vision/perception system
     marker_order_sub_ = this->create_subscription<std_msgs::msg::String>(
         "/marker_order", 10,
