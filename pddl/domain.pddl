@@ -17,7 +17,6 @@
         (is_first ?m - marker)
     )
 
-    ;; 1. Navigation
     (:durative-action navigate
         :parameters (?r - robot ?from ?to - waypoint)
         :duration (= ?duration 10)
@@ -31,7 +30,6 @@
         )
     )
 
-    ;; 2. DETECT
     (:durative-action detect_marker
         :parameters (?r - robot ?m - marker ?wp - waypoint)
         :duration (= ?duration 5)
@@ -45,7 +43,6 @@
         )
     )
 
-    ;;  PROCESS FIRST
     (:durative-action process_first
         :parameters (?r - robot ?m1 - marker ?wp - waypoint)
         :duration (= ?duration 5)
@@ -60,7 +57,6 @@
         )
     )
 
-    ;; PROCESS NEXT
     (:durative-action process_next
         :parameters (?r - robot ?m_prev ?m_curr - marker ?wp - waypoint)
         :duration (= ?duration 5)

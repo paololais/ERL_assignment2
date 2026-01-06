@@ -8,18 +8,15 @@
     )
 
     (:init
-        ;; Posizione Robot
-        (robot_at r1 start_pos) ;; Assumiamo parta da uno dei waypoint o aggiungi start_pos
+        (robot_at r1 start_pos)
 
-        ;; HINTS (Dove sono i marker secondo l'assignment
         (marker_at marker_1 wp_1)
         (marker_at marker_2 wp_2)
         (marker_at marker_3 wp_3)
         (marker_at marker_4 wp_4)
     )
 
-    ;; GOAL FASE 1: Trova tutto.
-    ;; Non chiediamo ancora di processarli, perché non sappiamo l'ordine.
+    ;; GOAL Phirst Phase: Detect all markers
     (:goal 
         (and
             (marker_detected marker_1)

@@ -2,16 +2,6 @@
 
 ## Overview
 
-This package has been developed for the *Experimental Robotics Laboratory* course  (Master’s Degree in Robotics Engineering, University of Genoa).
-
-The goal of the project is to develop a **ROS2 package** that allows a mobile robot equipped with a camera to autonomously **detect, visit and process ArUco markers** in the environment, following a planned sequence of actions.
-
-The robot implements the same general approach of *Assignment 1*, extended with task planning through **PlanSys2**.
-
----
-
-# Package Description
-
 This ROS2 package has been developed for the *Experimental Robotics Laboratory* course  
 (Master’s Degree in Robotics Engineering, University of Genoa).
 
@@ -80,13 +70,10 @@ The real-robot implementation can be found in the `rosbot` branch, where some mo
 
 ---
 
-
-
 ## Notes
 
-This project was developed as a **group assignment** (4–5 people).  
+This project was developed as a **group assignment** (5 people).  
 Different aspects of the system were addressed in parallel, including simulation setup, navigation, marker detection and task planning.
-
 
 ---
 
@@ -128,36 +115,6 @@ Launch file location:
 ERLassignment2/launch/assignment2.launch.py
 
 # Nodes Description
-
-This package includes both **Python** and **C++** ROS2 nodes. Python nodes mainly handle perception and high-level coordination, while C++ nodes implement **PlanSys2 actions**.
-
----
-
-## Python Nodes
-
-### `detect_aruco_node.py`
-
-This node is responsible for:
-
-- Subscribing to the camera image topic
-- Detecting ArUco markers in the image
-- Publishing marker detections using a custom message (`MarkerDetection.msg`)
-- Providing marker ID and relative pose information
-
----
-
-### `planning.py`
-
-This node acts as a high-level coordinator:
-
-- Interfaces with PlanSys2
-- Requests plan generation
-- Triggers plan execution
-- Monitors the planning and execution process
-
----
-
-## C++ Nodes
 
 ### `getplan.cpp`
 
@@ -281,26 +238,6 @@ Used for localization and navigation.
 
 ---
 
-## Robot Description
-
-### URDF (`urdf/`)
-- Robot model definition
-- Sensor and plugin configuration
-
-### Meshes (`meshes/`)
-- 3D models for visualization and simulation
-
----
-
-## Visualization (`rviz/`)
-
-- Preconfigured RViz setups for:
-  - Robot visualization
-  - Navigation
-  - Marker detection
-
----
-
 ## Worlds (`worlds/`)
 
 ### `simple_world.sdf`
@@ -329,12 +266,7 @@ source install/local_setup.bash
 ```
 
 ## Usage
-- Launch the Gazebo simulation and Rviz:
+- Launch the Gazebo simulation, Rviz, calculate the plan and execute it:
 ```bash
 ros2 launch assignment2 assignment.launch.py
-```
-
-- Run the node:
-```bash
-ros2 run assignment2 detect_aruco_node
 ```
