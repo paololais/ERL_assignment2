@@ -1,4 +1,4 @@
-# Experimental Robotics Laboratory – Assignment 1
+# Experimental Robotics Laboratory – Assignment 2
 
 ## Overview
 
@@ -309,7 +309,7 @@ Used for localization and navigation.
 ---
 # Demo videos
 ### Simulation
-https://github.com/paololais/ERLassignment2/video/simulation.mp4
+[![Watch the demo](https://img.youtube.com/vi/VIDEO_ID/0.jpg)](https://youtu.be/MoiHaN4X87o)
 
 ### ROSbot
 Still not provided
