@@ -8,10 +8,8 @@ from ament_index_python.packages import get_package_share_directory
 def generate_launch_description():
     pkg_name = 'assignment2'
     pkg_share = get_package_share_directory(pkg_name)
-
-    # 1. Define Paths to your existing launch files
     
-    # Path to map (Ensure this exists: assignment2/maps/map_of_world.yaml)
+    # Path to map
     map_file = os.path.join(pkg_share, 'maps', 'map_of_world.yaml')
     
     # Domain PDDL file
@@ -25,7 +23,6 @@ def generate_launch_description():
     )
 
     # Localization Launch (AMCL)
-    # Using the file we created earlier, passing the map and initial pose
     localization_cmd = IncludeLaunchDescription(
         PythonLaunchDescriptionSource(
             os.path.join(pkg_share, 'launch', 'localization.launch.py')
@@ -61,19 +58,17 @@ def generate_launch_description():
         }.items()
     )
 
-    # Mission Controller (The Client)
-    # This opens a NEW TERMINAL and runs the node that sends the plan
+    # Mission Controller Execution in new terminal
     execute_plan_cmd = ExecuteProcess(
         cmd=[
-            'gnome-terminal', '--', # 'gnome-terminal', '--',
+            'xterm', '-e', 
+            # 'gnome-terminal', '--',
             'ros2', 'run', 'assignment2', 'get_plan_and_execute'
         ],
         output='screen'
     )
-
-    # 2. Define the Sequence using TimerAction
-    # This logic is copied from your friend's repo
     
+    # Sequentially load nodes with delays
     load_nodes = TimerAction(
         period=1.0, 
         actions=[
