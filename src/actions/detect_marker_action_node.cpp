@@ -59,7 +59,7 @@ public:
     RCLCPP_INFO(get_logger(), "DetectMarker action node initialized");
   }
 
-  // ---------------- Lifecycle ----------------
+  //Lifecycle 
   rclcpp_lifecycle::node_interfaces::LifecycleNodeInterface::CallbackReturn
   on_activate(const rclcpp_lifecycle::State & previous_state)
   {
@@ -103,7 +103,7 @@ private:
   bool first_yaw_read_;
   float progress_;
 
-  // ---------------- Odometry ----------------
+  //Odometry
   void odom_callback(const nav_msgs::msg::Odometry::SharedPtr msg)
   {
     tf2::Quaternion q(
@@ -124,7 +124,7 @@ private:
     }
   }
 
-  // ---------------- Image ----------------
+  //Image
   void image_callback(
     const sensor_msgs::msg::CompressedImage::SharedPtr msg)
   {
@@ -162,7 +162,7 @@ private:
     }
   }
 
-  // ---------------- Main loop ----------------
+  //Main loop 
   void do_work() override
   {
     if (!first_yaw_read_) return;
@@ -189,10 +189,10 @@ private:
     stop.angular.z = 0.0;
     cmd_vel_pub_->publish(stop);
 
-    // ---------------- Publish result ----------------
+    //Publish result
     if (best_id_ != -1) {
       auto args = get_arguments();
-      // args: ?r ?m ?wp
+  
 
       assignment2::msg::MarkerDetection msg;
       msg.marker_name = args[1];

@@ -127,9 +127,8 @@ def generate_launch_description():
         output='screen',
         parameters=[])
     
-    #############################################################
+
     # ACTION NODES
-    #############################################################
     move_to_wp_cmd = Node(
         package='assignment2',
         executable='move_action_node',

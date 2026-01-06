@@ -144,7 +144,7 @@ private:
           // distance_remaining is the remaining distance to goal in meters
           if (feedback->distance_remaining > 0.0) {
             // Calculate progress: 1.0 means goal reached, 0.0 means just started
-            // Assuming max 20m is full distance (adjust based on your environment)
+            // Assuming max 20m is full distance
             progress_ = std::max(0.0, std::min(1.0, 1.0 - (feedback->distance_remaining / 20.0)));
             send_feedback(progress_, "Moving to " + target_wp + 
                          " (distance remaining: " + std::to_string(feedback->distance_remaining) + "m)");

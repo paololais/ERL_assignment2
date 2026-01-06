@@ -50,7 +50,7 @@ def generate_launch_description():
         }.items()
     )
 
-    # PlanSys2 Launch (Your distributed actions)
+    # PlanSys2 Launch 
     plansys2_cmd = IncludeLaunchDescription(
         PythonLaunchDescriptionSource(
             os.path.join(pkg_share, 'launch', 'distributed_actions.launch.py')
