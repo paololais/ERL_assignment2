@@ -65,7 +65,7 @@ def generate_launch_description():
     # This opens a NEW TERMINAL and runs the node that sends the plan
     execute_plan_cmd = ExecuteProcess(
         cmd=[
-            'xterm', '-e', # 'gnome-terminal', '--',
+            'gnome-terminal', '--', # 'gnome-terminal', '--',
             'ros2', 'run', 'assignment2', 'get_plan_and_execute'
         ],
         output='screen'
