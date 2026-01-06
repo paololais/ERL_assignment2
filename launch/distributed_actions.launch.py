@@ -146,7 +146,7 @@ def generate_launch_description():
         output='screen',
         parameters=[])
 
-    take_picture_cmd = Node(
+    process_first = Node(
         package='assignment2',
         executable='take_picture_action_node',
         name='take_picture_action_node',
@@ -154,10 +154,10 @@ def generate_launch_description():
         output='screen',
         parameters=[])
     
-    finalize_detection_phase_cmd = Node(
+    process_next = Node(
         package='assignment2',
-        executable='finalize_detection_phase_action_node',
-        name='finalize_detection_phase_action_node',
+        executable='process_last_image_action_node',
+        name='process_last_image_action_node',
         namespace=namespace,
         output='screen',
         parameters=[])
@@ -180,7 +180,7 @@ def generate_launch_description():
     ld.add_action(lifecycle_manager_cmd)
     ld.add_action(move_to_wp_cmd)
     ld.add_action(detect_marker_cmd)
-    ld.add_action(take_picture_cmd)
-    ld.add_action(finalize_detection_phase_cmd)
+    ld.add_action(process_first)
+    ld.add_action(process_next)
     
     return ld
