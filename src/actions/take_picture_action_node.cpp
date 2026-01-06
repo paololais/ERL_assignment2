@@ -37,16 +37,43 @@ public:
     target_id_ = -1;
     
     std::vector<std::string> args = get_arguments();
-    if (!args.empty()) {
-      std::string arg = args[0];
-      size_t underscore = arg.find_last_of('_');
-      if (underscore != std::string::npos) {
-        target_id_ = std::stoi(arg.substr(underscore + 1));
-      } else {
-        target_id_ = std::stoi(arg);
-      }
-      RCLCPP_INFO(get_logger(), "Taking Picture of ID: %d", target_id_);
+    
+    // process_first has 3 parameters: robot, marker, waypoint
+    // args[0] = robot (e.g., "robot_1")
+    // args[1] = marker (e.g., "marker_1")
+    // args[2] = waypoint (e.g., "wp1")
+    
+    RCLCPP_INFO(get_logger(), "process_first received %zu arguments", args.size());
+    for (size_t i = 0; i < args.size(); ++i) {
+      RCLCPP_INFO(get_logger(), "  args[%zu] = %s", i, args[i].c_str());
     }
+    
+    if (args.size() >= 2) {
+      try {
+        std::string marker_arg = args[1];  // Second argument is the marker
+        
+        // Extract numeric ID from marker name (e.g., "marker_1" -> 1)
+        size_t pos = marker_arg.find_last_not_of("0123456789");
+        if (pos != std::string::npos) {
+          // Extract the numeric part after the last non-digit character
+          std::string numeric_part = marker_arg.substr(pos + 1);
+          if (!numeric_part.empty()) {
+            target_id_ = std::stoi(numeric_part);
+          }
+        } else {
+          // If all characters are digits, convert directly
+          target_id_ = std::stoi(marker_arg);
+        }
+        
+        RCLCPP_INFO(get_logger(), "Taking Picture of marker: %s (ID: %d)", marker_arg.c_str(), target_id_);
+      } catch (const std::exception& e) {
+        RCLCPP_ERROR(get_logger(), "Error parsing marker ID: %s", e.what());
+        target_id_ = -1;
+      }
+    } else {
+      RCLCPP_WARN(get_logger(), "process_first expected at least 2 arguments, got %zu", args.size());
+    }
+    
     return ActionExecutorClient::on_activate(previous_state);
   }
 
