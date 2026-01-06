@@ -33,46 +33,20 @@ public:
   rclcpp_lifecycle::node_interfaces::LifecycleNodeInterface::CallbackReturn
   on_activate(const rclcpp_lifecycle::State & previous_state)
   {
-    target_visible_ = false;
-    target_id_ = -1;
+    marker_visible_ = false;
+    closest_marker_id_ = -1;
+    centered_ = false;
+    marker_error_x_ = 0.0;
     
     std::vector<std::string> args = get_arguments();
     
     // process_first has 3 parameters: robot, marker, waypoint
-    // args[0] = robot (e.g., "robot_1")
-    // args[1] = marker (e.g., "marker_1")
-    // args[2] = waypoint (e.g., "wp1")
-    
     RCLCPP_INFO(get_logger(), "process_first received %zu arguments", args.size());
     for (size_t i = 0; i < args.size(); ++i) {
       RCLCPP_INFO(get_logger(), "  args[%zu] = %s", i, args[i].c_str());
     }
     
-    if (args.size() >= 2) {
-      try {
-        std::string marker_arg = args[1];  // Second argument is the marker
-        
-        // Extract numeric ID from marker name (e.g., "marker_1" -> 1)
-        size_t pos = marker_arg.find_last_not_of("0123456789");
-        if (pos != std::string::npos) {
-          // Extract the numeric part after the last non-digit character
-          std::string numeric_part = marker_arg.substr(pos + 1);
-          if (!numeric_part.empty()) {
-            target_id_ = std::stoi(numeric_part);
-          }
-        } else {
-          // If all characters are digits, convert directly
-          target_id_ = std::stoi(marker_arg);
-        }
-        
-        RCLCPP_INFO(get_logger(), "Taking Picture of marker: %s (ID: %d)", marker_arg.c_str(), target_id_);
-      } catch (const std::exception& e) {
-        RCLCPP_ERROR(get_logger(), "Error parsing marker ID: %s", e.what());
-        target_id_ = -1;
-      }
-    } else {
-      RCLCPP_WARN(get_logger(), "process_first expected at least 2 arguments, got %zu", args.size());
-    }
+    RCLCPP_INFO(get_logger(), "Looking for closest ArUco marker");
     
     return ActionExecutorClient::on_activate(previous_state);
   }
@@ -84,75 +58,176 @@ private:
   cv::Ptr<cv::aruco::Dictionary> aruco_dict_;
   cv::Ptr<cv::aruco::DetectorParameters> aruco_params_;
 
-  int target_id_;
-  bool target_visible_;
-  double current_error_x_;
+  int closest_marker_id_;
+  bool marker_visible_;
+  bool centered_;
+  double marker_error_x_;
   cv::Mat last_image_;
-  std::vector<cv::Point2f> target_corners_;
+  std::vector<cv::Point2f> closest_marker_corners_;
 
   void image_callback(const sensor_msgs::msg::CompressedImage::SharedPtr msg)
   {
     if (get_current_state().id() != lifecycle_msgs::msg::State::PRIMARY_STATE_ACTIVE) return;
+    
     try {
       cv::Mat image = cv::imdecode(cv::Mat(msg->data), cv::IMREAD_COLOR);
       if (image.empty()) return;
+      
       last_image_ = image.clone();
       std::vector<int> ids;
       std::vector<std::vector<cv::Point2f>> corners;
+      
       cv::aruco::detectMarkers(image, aruco_dict_, corners, ids, aruco_params_);
-      target_visible_ = false;
+      
+      marker_visible_ = false;
+      closest_marker_id_ = -1;
+      
       if (!ids.empty()) {
+        // Find the closest marker (largest size = closest to camera)
+        double max_area = -1.0;
+        int closest_idx = -1;
+        
         for (size_t i = 0; i < ids.size(); ++i) {
-          if (ids[i] == target_id_) {
-            target_visible_ = true;
-            target_corners_ = corners[i];
-            float cx = (corners[i][0].x + corners[i][2].x) / 2.0;
-            current_error_x_ = (image.cols / 2.0) - cx;
-            break; 
+          // Calculate marker area as a measure of distance
+          cv::Point2f p1 = corners[i][0];
+          cv::Point2f p2 = corners[i][2];
+          double area = cv::norm(p1 - p2);
+          
+          if (area > max_area) {
+            max_area = area;
+            closest_idx = i;
           }
         }
+        
+        if (closest_idx >= 0) {
+          marker_visible_ = true;
+          closest_marker_id_ = ids[closest_idx];
+          closest_marker_corners_ = corners[closest_idx];
+          
+          // Calculate center of marker
+          cv::Point2f center(0, 0);
+          for (const auto& p : closest_marker_corners_) {
+            center += p;
+          }
+          center *= 0.25f;
+          
+          // Calculate error: distance from image center to marker center
+          float image_center_x = image.cols / 2.0f;
+          marker_error_x_ = image_center_x - center.x;
+          
+          RCLCPP_DEBUG(get_logger(), "Detected marker ID %d at x=%.1f, error=%.1f", 
+            closest_marker_id_, center.x, marker_error_x_);
+        }
       }
-    } catch (...) {}
+    } catch (const std::exception& e) {
+      RCLCPP_ERROR(get_logger(), "Error in image callback: %s", e.what());
+    }
   }
 
   void do_work()
   {
     geometry_msgs::msg::Twist cmd;
-    if (last_image_.empty()) return;
+    cmd.linear.x = 0.0;
+    cmd.linear.y = 0.0;
+    cmd.linear.z = 0.0;
+    cmd.angular.x = 0.0;
+    cmd.angular.y = 0.0;
+    cmd.angular.z = 0.0;
+    
+    if (last_image_.empty()) {
+      RCLCPP_DEBUG(get_logger(), "Waiting for image...");
+      return;
+    }
 
-    if (target_visible_) {
-      if (std::abs(current_error_x_) < 10.0) {
+    if (marker_visible_) {
+      // Check if marker is centered (error < threshold)
+      if (std::abs(marker_error_x_) < 15.0) {
+        // Marker is centered - take picture and finish
+        if (!centered_) {
+          centered_ = true;
+          RCLCPP_INFO(get_logger(), "Marker centered! Taking picture...");
+        }
+        
+        // Stop rotation
         cmd.angular.z = 0.0;
         cmd_vel_pub_->publish(cmd);
+        
+        // Draw and publish the centered marker image
         draw_and_publish();
-        finish(true, 1.0, "Picture Taken");
+        
+        // Finish the action successfully
+        finish(true, 1.0, "Picture Taken Successfully");
       } else {
-        // Friction Clamp Fix
-        float az = 0.002 * current_error_x_;
-        if (std::abs(az) < 0.15) az = (az > 0) ? 0.15 : -0.15;
-        cmd.angular.z = az;
+        // Marker is not centered - rotate to center it
+        centered_ = false;
+        
+        // Simple proportional control for rotation
+        // Positive error means marker is to the right, rotate clockwise
+        float rotation_speed = 0.003f * marker_error_x_;
+        
+        // Clamp rotation speed to reasonable values
+        if (std::abs(rotation_speed) < 0.1f) {
+          rotation_speed = (rotation_speed > 0) ? 0.1f : -0.1f;
+        }
+        if (std::abs(rotation_speed) > 0.5f) {
+          rotation_speed = (rotation_speed > 0) ? 0.5f : -0.5f;
+        }
+        
+        cmd.angular.z = rotation_speed;
         cmd_vel_pub_->publish(cmd);
+        
+        RCLCPP_DEBUG(get_logger(), "Centering marker ID %d, error=%.1f, rotation=%.2f", 
+          closest_marker_id_, marker_error_x_, rotation_speed);
       }
     } else {
+      // No marker detected - slow rotation to search
+      RCLCPP_DEBUG(get_logger(), "No marker detected, searching...");
       cmd.angular.z = 0.3;
       cmd_vel_pub_->publish(cmd);
+      centered_ = false;
     }
   }
 
   void draw_and_publish()
   {
-    if (last_image_.empty() || target_corners_.empty()) return;
-    cv::Point2f center(0,0);
-    for(auto p : target_corners_) center += p;
-    center *= 0.25;
-    float radius = cv::norm(target_corners_[0] - target_corners_[1]) / 1.5;
-    cv::circle(last_image_, center, (int)radius, cv::Scalar(0, 255, 0), 4);
-    cv::putText(last_image_, "ID " + std::to_string(target_id_), center, 
-      cv::FONT_HERSHEY_SIMPLEX, 1.0, cv::Scalar(0,255,0), 2);
+    if (last_image_.empty() || closest_marker_corners_.empty()) {
+      RCLCPP_WARN(get_logger(), "Cannot draw: empty image or corners");
+      return;
+    }
     
+    cv::Mat display_image = last_image_.clone();
+    
+    // Calculate marker center
+    cv::Point2f center(0, 0);
+    for (const auto& p : closest_marker_corners_) {
+      center += p;
+    }
+    center *= 0.25f;
+    
+    // Calculate marker radius
+    float radius = cv::norm(closest_marker_corners_[0] - closest_marker_corners_[1]) / 1.5f;
+    
+    // Draw circle around marker
+    cv::circle(display_image, center, (int)radius, cv::Scalar(0, 255, 0), 4);
+    
+    // Draw marker ID
+    cv::putText(display_image, "Marker " + std::to_string(closest_marker_id_), 
+      cv::Point(center.x - 30, center.y - radius - 10),
+      cv::FONT_HERSHEY_SIMPLEX, 0.8, cv::Scalar(0, 255, 0), 2);
+    
+    // Draw crosshair at image center
+    int img_cx = display_image.cols / 2;
+    cv::line(display_image, cv::Point(img_cx - 20, display_image.rows / 2), 
+             cv::Point(img_cx + 20, display_image.rows / 2), cv::Scalar(255, 0, 0), 2);
+    cv::line(display_image, cv::Point(img_cx, display_image.rows / 2 - 20),
+             cv::Point(img_cx, display_image.rows / 2 + 20), cv::Scalar(255, 0, 0), 2);
+    
+    // Publish the image
     sensor_msgs::msg::CompressedImage out;
-    cv_bridge::CvImage(std_msgs::msg::Header(), "bgr8", last_image_).toCompressedImageMsg(out);
+    cv_bridge::CvImage(std_msgs::msg::Header(), "bgr8", display_image).toCompressedImageMsg(out);
     result_img_pub_->publish(out);
+    
+    RCLCPP_INFO(get_logger(), "Published centered marker image: Marker %d at center", closest_marker_id_);
   }
 };
 
