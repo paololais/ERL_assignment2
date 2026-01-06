@@ -309,7 +309,7 @@ Used for localization and navigation.
 ---
 # Demo videos
 ### Simulation
-https://github.com/user-attachments/assets/0d2db3d4-ed0b-4b45-ab71-1c68f5bfad79
+https://github.com/paololais/ERLassignment2/blob/main/video/demo.mp4
 
 ### ROSbot
 Still not provided
